@@ -59,6 +59,8 @@ void KMP(const char* text, const char* pattern, int m, int n)
 	if(k == arr[cnt]+n){
 		printf("]");
 		cnt++;
+		k--;
+		continue;
 	}
 	printf("%c",text[k]);
     }
