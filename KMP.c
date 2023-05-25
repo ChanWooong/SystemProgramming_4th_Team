@@ -53,22 +53,22 @@ int* KMP(const char* text, const char* pattern, int m, int n)
     }
     int check = 0;
     cnt = 0;
-    for(int k = 0; k < m; k++){
+
+    for(int k = 0; k < strlen(text); k++){
 	if(k == arr[cnt]){
-		printf("[");
-		result[check++] = k;	
+		result[check] = k;
 	}
 	if(k == arr[cnt]+n){
-		printf("]");
+		check++;
 		cnt++;
 		k--;
 		continue;
 	}
-	printf("%c",text[k]);
     }
     if(check == 0){
 	printf("There has no String in FIle\n");
     }	
     printf("\n");
     return result;
+
 }

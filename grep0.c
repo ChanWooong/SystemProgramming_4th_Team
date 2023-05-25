@@ -33,21 +33,34 @@ int main(int argc, char* argv[])
 }
 
 void displayScreen(FILE* fd, char* find){
-    int data[MAX] = {0};
+    int *data;
     char buffer[MAX] = {0};
     fread(buffer, 1, MAX, fd);
 
     printf("---------------- origin ----------------\n\n");
     printf("%s", buffer);
  
-    int n = strlen(buffer);
-    int m = strlen(find);
+    int n = strlen(find);
+    int m = strlen(buffer);
     printf("\n\n---------------- fine ----------------\n\n");
-    data = KMP(buffer, find, n, m);
-    printf("\n");
-    for(int i = 0; i < sizeof(data)/4; i++){
-    	printf("[%d]", data[i]);
+    data = KMP(buffer, find, m, n);
+    int point;
+    
+    for(int k = 0; k < m; k++){
+	if(k == data[point]){
+		printf("[");	
+	}
+	if(k == data[point]+n){
+		printf("]");
+		k--;
+		point++;
+		continue;
+	}
+	printf("%c",buffer[k]);
     }
+    
+    printf("\n");
+    
  
 }
 
