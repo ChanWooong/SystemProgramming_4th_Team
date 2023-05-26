@@ -2,19 +2,21 @@
 #include <string.h>
 #include <stdlib.h>
 
-int result[BUFSIZ] = {0};
+int result[BUFSIZ];
 int* KMP(const char* text, const char* pattern, int m, int n)
 {
-	int arr[20];
+	int arr[20] = {0};
 	int cnt = 0;
-
+    for(int i = 0 ; i<20; i++){
+    	result[i] = '\0';
+    }
     if (*pattern == '\0' || n == 0) {
         printf("The pattern occurs with shift 0");
     }
  
 
     if (*text == '\0' || n > m) {
-        printf("Pattern not found");
+        return NULL;
     }
  
 
@@ -65,10 +67,10 @@ int* KMP(const char* text, const char* pattern, int m, int n)
 		continue;
 	}
     }
-    if(check == 0){
-	printf("There has no String in FIle\n");
-    }	
-    printf("\n");
-    return result;
-
+    cnt = 0;
+    for(int k; k<20; k++){
+    	printf("%d, ",result[k]);
+    }
+    if(cnt == 0) return NULL;
+    else return result;
 }
