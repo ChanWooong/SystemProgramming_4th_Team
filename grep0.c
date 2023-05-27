@@ -134,22 +134,19 @@ void displayScreen(FILE* fd, char* find, char* filename){
 				if(k == l_data[cnt]+n){
 					printf(COLOR_DEFAULT);
 					cnt++;
-					k--;
-					continue;
+					//k--;
+					//continue;
 				}
 				printf("%c",cur_line[k]);
     		    	}	
     		    	printf(COLOR_DEFAULT);
 	  	    }
-	  	    
-	    	    printf("%s", cur_line);	    
+		    //printf("%s", cur_line);	    
 
             	    strncpy(pre_line[index], cur_line, MAX);
             	    index = (index + 1) % BUFFERSIZ;
             	    buf_line = buf_line < BUFFERSIZ ? buf_line + 1 : BUFFERSIZ;
-	
-
-	    	    if(!flag) {
+            	    if(!flag) {
 			while(1) {
 				printf("\n\nn : next q : quit\n\n\n");
 				int ch = getch();
@@ -169,17 +166,21 @@ void displayScreen(FILE* fd, char* find, char* filename){
 	    		skip = true;
     	  	   }
     
-    		   if(flag)
+    		   if(flag){
 	   		 break;
     		   }
+		}
+		
+		 
 
-    		   if (!found) {
+   
+		}
+		
+		  if (!found) {
       	 		printf("Cannot find pattern\n");
    	 	   }
 
     		   fclose(fd);
-   
-		}
 	}
 }
     

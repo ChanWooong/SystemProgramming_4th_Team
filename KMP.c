@@ -67,10 +67,10 @@ int* KMP(const char* text, const char* pattern, int m, int n)
 		continue;
 	}
     }
-    cnt = 0;
+    int count = 0;
     for(int i = 0; i< 20; i++){
     	if(result[i] != 0){
-    		cnt++;
+    		count++;
     		break;
     	}
     }
