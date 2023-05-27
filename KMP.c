@@ -7,7 +7,7 @@ int* KMP(const char* text, const char* pattern, int m, int n)
 {
 	int arr[20] = {0};
 	int cnt = 0;
-    for(int i = 0 ; i<20; i++){
+    for(int i = 0; i< 20; i++){
     	result[i] = '\0';
     }
     if (*pattern == '\0' || n == 0) {
@@ -68,8 +68,11 @@ int* KMP(const char* text, const char* pattern, int m, int n)
 	}
     }
     cnt = 0;
-    for(int k; k<20; k++){
-    	printf("%d, ",result[k]);
+    for(int i = 0; i< 20; i++){
+    	if(result[i] != 0){
+    		cnt++;
+    		break;
+    	}
     }
     if(cnt == 0) return NULL;
     else return result;

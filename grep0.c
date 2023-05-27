@@ -86,16 +86,17 @@ void option_l(char* findstr, int find_length){
 		fread(buffer,1, MAX, fd);
 		int* data = NULL;
 		data = KMP(buffer, findstr ,strlen(buffer), strlen(findstr));
-		if(data != NULL){		
-			
+		if(data != NULL)
 			printf("%s\n",entry->d_name);
-			
+	/*
+		for(int i = 0 ; i<3; i++){
+			printf("%d, ",data[i]);
 		}
+		printf("\n");
+	*/	
 
 	}
 	printf("--------------------------------------\n");
-	/*
-	*/	
 }
 
 
