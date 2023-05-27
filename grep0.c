@@ -5,16 +5,65 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <stdbool.h>
+#include <signal.h>
+#include <ctype.h>
+#include <termios.h>
  
+#define BUFFERSIZ 3
 #define MAX 3000
+
+#ifdef _WIN32
+void clear() {
+	system("cls");
+}
+#else
+void clear() {
+	printf("\033[H\033[J");
+}
+#endif
+
+volatile sig_atomic_t flag = 0;
+
+void signal_handler(int signal) {
+	if(signal == SIGINT)
+		flag = 1;
+}
+
+
+void setup() {
+	struct sigaction sa;
+	sa.sa_handler = signal_handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+}
+
+void set_mode(int fd, struct termios* prev_term) {
+	struct termios term;
+	tcgetattr(fd, prev_term);
+	term = *prev_term;
+	term.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(fd, TCSANOW, &term);
+}
+
+
 void displayScreen(FILE* fd, char* find);
 void option_l(char* findstr, int find_length);
+void restore(int fd, struct termios* prev_term);
+int getch();
 
 int main(int argc, char* argv[])
 {   
     FILE* fd;
     char find[MAX];
     char option;
+    char cur_line[MAX] = {0};
+    char pre_line[BUFFERSIZ][MAX] = {0};
+    int index = 0;
+    int buf_line = 0;
+    bool found = false;
+    bool skip = false;
     
     if(argc < 3){
     	printf("check the number of parameters.\n");
@@ -99,4 +148,15 @@ void option_l(char* findstr, int find_length){
 	printf("--------------------------------------\n");
 }
 
+void restore(int fd, struct termios* prev_term) {
+	tcsetattr(fd, TCSANOW, prev_term);
+}
 
+int getch() {
+	int ch;
+	struct termios old_term;
+	set_mode(STDIN_FILENO, &old_term);
+	ch = getchar();
+	restore(STDIN_FILENO, &old_term);
+	return ch;
+}
