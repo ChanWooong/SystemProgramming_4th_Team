@@ -12,6 +12,8 @@
  
 #define BUFFERSIZ 3
 #define MAX 3000
+#define COLOR_DEFAULT "\033[49m"
+#define COLOR_ORANGE "\033[43m"
 
 #ifdef _WIN32
 void clear() {
@@ -48,7 +50,7 @@ void set_mode(int fd, struct termios* prev_term) {
 }
 
 
-void displayScreen(FILE* fd, char* find);
+void displayScreen(FILE* fd, char* find, char* filename);
 void option_l(char* findstr, int find_length);
 void restore(int fd, struct termios* prev_term);
 int getch();
@@ -58,12 +60,7 @@ int main(int argc, char* argv[])
     FILE* fd;
     char find[MAX];
     char option;
-    char cur_line[MAX] = {0};
-    char pre_line[BUFFERSIZ][MAX] = {0};
-    int index = 0;
-    int buf_line = 0;
-    bool found = false;
-    bool skip = false;
+    
     
     if(argc < 3){
     	printf("check the number of parameters.\n");
@@ -71,7 +68,6 @@ int main(int argc, char* argv[])
     }
     
     else if(argc == 3){
-        printf("%c",argv[1][0]);
     	if(argv[1][0] == '-'){
     		option = argv[1][1];
     		if(option == 'l'){
@@ -80,47 +76,115 @@ int main(int argc, char* argv[])
   		}
     	}
     	else {
+    		printf("h");
     		fd = fopen(argv[2], "r");
     		strcpy(find,argv[1]);
-    		displayScreen(fd, find);
+    		displayScreen(fd,find,argv[2]);
     	}
     }
-
     return 0;
 }
 
-void displayScreen(FILE* fd, char* find){
+void displayScreen(FILE* fd, char* find, char* filename){
     int *data;
     char buffer[MAX] = {0};
+    char cur_line[MAX] = {0};
+    char pre_line[BUFFERSIZ][MAX] = {0};
+    int index = 0;
+    int buf_line = 0;
+    bool found = false;
+    bool skip = false;
+    
+    
     fread(buffer, 1, MAX, fd);
-
-    printf("---------------- origin ----------------\n\n");
-    printf("%s", buffer);
- 
     int n = strlen(find);
     int m = strlen(buffer);
-    printf("\n\n---------------- find ----------------\n\n");
+    fclose(fd);
+    
     data = KMP(buffer, find, m, n);
-   	if(data != NULL){
-        int point = 0;
+    printf("[%d]",data[0]);
+   if(data != NULL){
+   	fd = fopen(filename, "r");
+   	setup();
+	
+    	while (fgets(cur_line, MAX, fd) != NULL)
+    	{	
+    		int *l_data;
+		clear();
+
+        	if (strstr(cur_line, find) != NULL)
+        	{
+        	    found = true;
+		    skip = true;
+
+        	    int n = strlen(find);
+        	    int m = strlen(cur_line);
+
+	  	    printf("\n\n\n\n");
+	 	    printf("%s", pre_line[(index+1)%BUFFERSIZ]);
+
+	  	    l_data = KMP(cur_line, find, m, n);
+	  	    
+	  	    if(l_data != NULL){
+	  	    	int cnt = 0;
+    		   	for(int k = 0; k < m; k++){
+				if(k == l_data[cnt]){
+					printf(COLOR_ORANGE);	
+				}
+				if(k == l_data[cnt]+n){
+					printf(COLOR_DEFAULT);
+					cnt++;
+					k--;
+					continue;
+				}
+				printf("%c",cur_line[k]);
+    		    	}	
+    		    	printf(COLOR_DEFAULT);
+	  	    }
+	  	    
+	    	    printf("%s", cur_line);	    
+
+            	    strncpy(pre_line[index], cur_line, MAX);
+            	    index = (index + 1) % BUFFERSIZ;
+            	    buf_line = buf_line < BUFFERSIZ ? buf_line + 1 : BUFFERSIZ;
+	
+
+	    	    if(!flag) {
+			while(1) {
+				printf("\n\nn : next q : quit\n\n\n");
+				int ch = getch();
+				if(tolower(ch) == 'n')
+					break;
+				else if(tolower(ch) == 'q') {
+					flag = 1;
+					break;
+				}
+				else if(!isspace(ch)) {
+					printf("n : next q : quit\n\n\n");
+				}
+		       }		
+		
+    	   	   }
+    	   	   else {
+	    		skip = true;
+    	  	   }
     
-   	for(int k = 0; k < m; k++){
-		if(k == data[point]){
-			printf("[");	
+    		   if(flag)
+	   		 break;
+    		   }
+
+    		   if (!found) {
+      	 		printf("Cannot find pattern\n");
+   	 	   }
+
+    		   fclose(fd);
+   
 		}
-		if(k == data[point]+n){
-			printf("]");
-			k--;
-			point++;
-			continue;
-		}
-		printf("%c",buffer[k]);
-    	}
-   	printf("\n");
-    }
-    
- 
+	}
 }
+    
+
+
 void option_l(char* findstr, int find_length){
 	
 	struct dirent *entry = NULL;
