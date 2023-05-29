@@ -2,14 +2,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-int result[BUFSIZ];
+int *result;
+
 int* KMP(const char* text, const char* pattern, int m, int n)
 {
+    result = NULL;
 	int arr[20] = {0};
 	int cnt = 0;
-    for(int i = 0; i< 20; i++){
-    	result[i] = '\0';
-    }
+
     if (*pattern == '\0' || n == 0) {
         printf("The pattern occurs with shift 0");
     }
@@ -25,8 +25,8 @@ int* KMP(const char* text, const char* pattern, int m, int n)
     for (int i = 0; i < n + 1; i++) {
         next[i] = 0;
     }
- 
-    for (int i = 1; i < n; i++)
+    
+    for (int i = 1; i < n; i++)//실패함수
     {
         int j = next[i];
  
@@ -34,7 +34,7 @@ int* KMP(const char* text, const char* pattern, int m, int n)
             j = next[j];
         }
  
-        if (j > 0 || pattern[j] == pattern[i]) {
+        if (pattern[j] == pattern[i]) {
             next[i + 1] = j + 1;
         }
     }
@@ -44,7 +44,14 @@ int* KMP(const char* text, const char* pattern, int m, int n)
         if (*(text + i) == *(pattern + j))
         {
             if (++j == n) {
-                arr[cnt++] = i-j+1;
+                arr[cnt] = i-j+1;
+                if(result == NULL){
+                    result = (int*)malloc(sizeof(int));
+                }
+                else{
+                    result = realloc(result, sizeof(int) * (cnt+1));
+                }
+                result[cnt++] = i-j+1;        
             }
         }
         else if (j > 0)
@@ -53,27 +60,8 @@ int* KMP(const char* text, const char* pattern, int m, int n)
             i--;   
         }
     }
-    int check = 0;
-    cnt = 0;
 
-    for(int k = 0; k < strlen(text); k++){
-	if(k == arr[cnt]){
-		result[check] = k;
-	}
-	if(k == arr[cnt]+n){
-		check++;
-		cnt++;
-		k--;
-		continue;
-	}
-    }
-    int count = 0;
-    for(int i = 0; i< 20; i++){
-    	if(result[i] != 0){
-    		count++;
-    		break;
-    	}
-    }
     if(cnt == 0) return NULL;
+    
     else return result;
 }
