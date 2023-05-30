@@ -102,6 +102,7 @@ void displayScreen(FILE* fd, char* find, char* filename){
     int buf_line = 0;
     bool found = false;
     bool skip = false;
+    int input = false;
     
     
     fread(buffer, 1, MAX, fd);
@@ -131,7 +132,7 @@ void displayScreen(FILE* fd, char* find, char* filename){
 	  	    	printf("\n\n\n\n");
 			
 		    	int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
-		    	if(strlen(pre_line[per_index] > 0){
+		    	if(strlen(pre_line[pre_index]) > 0){
 		    		printf("%s\n", pre_line[pre_index]);
 		    	}
 
@@ -146,8 +147,8 @@ void displayScreen(FILE* fd, char* find, char* filename){
 						if(k == l_data[cnt]+n){
 							printf(COLOR_DEFAULT);
 							cnt++;
-							//k--;
-							//continue;
+							k--;
+							continue;
 						}
 						printf("%c",cur_line[k]);
     		    	}	
@@ -166,7 +167,7 @@ void displayScreen(FILE* fd, char* find, char* filename){
 	  	 		break;
     	  	}
 		       
-	  		if(input) {
+	  		if(!flag) {
 				while(1) {
 					printf("\n\nn : next q : quit\n\n\n");
 					int ch = getch();
