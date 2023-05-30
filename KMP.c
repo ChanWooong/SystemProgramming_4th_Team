@@ -61,28 +61,6 @@ int* KMP(const char* text, const char* pattern, int m, int n)
         }
     }
 
-/*<<<<<<< HEAD*/
-int check = 0;
-    for(int k = 0; k < strlen(text); k++){
-	if(k == arr[cnt]){
-		result[check] = k;
-	}
-	if(k == arr[cnt]+n){
-		check++;
-		cnt++;
-		k--;
-		continue;
-	}
-    }
-    int count = 0;
-    for(int i = 0; i< 20; i++){
-    	if(result[i] != 0){
-    		count++;
-    		break;
-    	}
-    }
-/*=======
->>>>>>> 687aee923c6bdef44fa9d126b244f054bcefebc2*/
     if(cnt == 0) return NULL;
     else return result;
 }

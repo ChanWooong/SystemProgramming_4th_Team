@@ -7,9 +7,32 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "grepLib.h"
+#include <curses.h>
+#include <signal.h>
+
+
 
 //KMP의 리턴값은 시작포인트 int배열, 문자열이 없는 경우 NULL 출력
-
+void init(){
+	wrefresh(win);
+	wrefresh(title);
+	wrefresh(win2);
+        wrefresh(content);
+}
+int n_q(){
+	wrefresh(content);
+        noecho();
+	int ch = wgetch(win2);
+	if(tolower(ch) == 'n') {
+		clear();
+		return 1;
+	}
+	if(tolower(ch) == 'q') {
+		clear();
+		sleep(2);
+		return 0;
+	}
+}
 void Strlwr(char string[]){ //option_i에 필요(대소문자 구별 X)
     int i = 0;
     while(string[i] != '\0'){
@@ -63,14 +86,17 @@ void option_none(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
-
     for(int i = 0; i<buffer_size; i++){
+	 init(); 
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
-            print_threeline(i, buffer, data, find_length, 8);
+            print_threeline(i, buffer, data, find_length, 5);
         }
+        if(n_q() == 0) break;
+        else continue;
     }
+    clear();
 }
 
 void option_all(FILE* fp, char* findstr, int find_length){
@@ -123,14 +149,21 @@ void option_i(char* filename, char* findstr, int find_length){
     int line_length, *data;
 
     for(int i = 0; i<buffer_size; i++){
-        line_length = strlen(buffer[i]);
+    	init();
+    	line_length = strlen(buffer[i]);
         Strlwr(buffer[i]);
         Strlwr(findstr);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
-            print_threeline(i, buffer, data, find_length, 8);
+            print_threeline(i, buffer, data, find_length, 5);
         }
+        
+        if(n_q() == 0) break;
+        else continue;
+        sleep(100);
     }
+    clear();
+    
 }
 
 // -h : 파일 이름을 출력하지 않는다.

@@ -1,5 +1,11 @@
+#include <curses.h>
+
 int* KMP(const char* text, const char* pattern, int m, int n);
 int* result;
+WINDOW *win;
+WINDOW *win2;
+WINDOW *title;
+WINDOW *content;
 
 void option_none(char* filename, char* findstr, int find_length);
 

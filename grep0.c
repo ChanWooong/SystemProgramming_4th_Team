@@ -16,7 +16,7 @@
 #define MAX 3000
 #define COLOR_DEFAULT "\033[49m"
 #define COLOR_ORANGE "\033[43m"
-#define blankstr "                             "
+#define blankstr "                               "
 
 
 //출력에 필요한 함수와 전역변수
@@ -68,7 +68,6 @@ int main(int argc, char* argv[])
     FILE* fd;
     char find[MAX];
     char option;
-    char** fileArr;
     
     if(argc < 3){
     	printf("check the number of parameters.\n");
@@ -87,8 +86,8 @@ int main(int argc, char* argv[])
      		fd = fopen(argv[2], "r");
     		strcpy(find,argv[1]);
     		makeUI();
-    		fileArr = getdata(argv[2]);
-
+    		option_none(argv[2],argv[1],strlen(argv[1])); // none option 케이스 호출
+		endwin();
     		//displayScreen(fd,find,argv[2]);
     	}
     }
@@ -100,6 +99,10 @@ int main(int argc, char* argv[])
     			strcpy(find, argv[2]);
 			option_c(argv[3], find,strlen(find));
 		}
+		if(option == 'i'){
+			makeUI();
+			option_i(argv[3],argv[2],strlen(argv[2]));
+		}
 	}
     }
     else if(argc == 6 && argv[1][1] == 'p'){
@@ -107,7 +110,7 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-void makeUI(){
+void makeUI(){ //UI를 window로 구현.
 	initscr();
 	clear();
 	win = newwin(23,60,2,7);
@@ -126,13 +129,13 @@ void makeUI(){
 	content = subwin(win,13,58,6,8);
 	box(content, ACS_VLINE, ACS_HLINE);
 	wmove(content, 2,2);
-	
 	wrefresh(win);
 	wrefresh(title);
 	wrefresh(win2);
-	sleep(100);
-	endwin();
+	wrefresh(content);
+
 }
+
 void option_l(char* findstr, int find_length){
 	
 	struct dirent *entry = NULL;
@@ -216,18 +219,17 @@ void printline(char* line, int* data_KMP, int find_length, int linenum){//문자
     int arrsize = getarraysize(data_KMP);
 
     for(int i = 0 ;i < strlen(line); i++){
-        wmove(win, linenum, i + 10);
+        wmove(content, linenum, i + 2);
         for(int j = 0; j < arrsize; j++){
             if(i == data_KMP[j]){
-                standout();
+                wstandout(content);
             }
             else if(i == data_KMP[j] + find_length){
-                standend();
+                wstandend(content);
             }
         }
-        addch(line[i]);
+        waddch(content,line[i]);
     }
-    refresh();
 }
 
 void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
@@ -235,25 +237,24 @@ void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int l
     int arrsize = getarraysize(data_KMP);
     if(i == 0){
         printline(buffer[i], data_KMP, find_length, linenum);
-        wmove(content,linenum+2, 10);
+        wmove(content,linenum+2, 2);
         waddstr(content,buffer[i+1]);
     }
-    else if(i == buffersize -1){
-        wmove(content,linenum - 2, 10);
+    else if(i == buffersize -2){
+        wmove(content,linenum - 2, 2);
         waddstr(content,buffer[i-1]);
         printline(buffer[i], data_KMP, find_length, linenum);
-        wmove(content,linenum+2, 10);
+        wmove(content,linenum+2, 2);
         waddstr(content,blankstr);
 
     }
     else{
-        wmove(content,linenum - 2, 10);
+        wmove(content,linenum - 2, 2);
         waddstr(content,buffer[i-1]);
         printline(buffer[i], data_KMP, find_length, linenum);
-        wmove(content,linenum+2, 10);
+        wmove(content,linenum+2, 2);
         waddstr(content,buffer[i+1]);
     }
-    refresh();
     sleep(1);
 }
 
