@@ -9,11 +9,23 @@
 #include <signal.h>
 #include <ctype.h>
 #include <termios.h>
+
  
 #define BUFFERSIZ 3
 #define MAX 3000
 #define COLOR_DEFAULT "\033[49m"
 #define COLOR_ORANGE "\033[43m"
+
+
+//출력에 필요한 함수와 전역변수
+char* data_buffer[100];
+char** getdata(char* filename);
+int getbuffersize(char** buffer);
+int getarraysize(int* arr);
+void printline(char* line, int* start_index, int find_length, int linenum);
+void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
+#define blankstr "                             "
+
 
 #ifdef _WIN32
 void clear() {
@@ -234,4 +246,97 @@ int getch() {
 	ch = getchar();
 	restore(STDIN_FILENO, &old_term);
 	return ch;
+}
+
+
+char** getdata(char* filename){//파일을 열어 char*배열에 파일 내용 넣어 반환
+	FILE* fp;
+
+	for(int i = 0; i < 100; i++){
+		data_buffer[100] = NULL;
+	}
+    char* line_buffer;
+    int buffer_i = 0;
+
+    fp = fopen(filename, "r");
+
+    while(1){
+        line_buffer = (char*)malloc(sizeof(char) * 256);
+        data_buffer[buffer_i] = fgets(line_buffer, 256, fp);
+        if(data_buffer[buffer_i] == NULL)
+            break;
+        buffer_i++;
+    }
+    buffer_i = 0;
+
+	return data_buffer;
+}
+
+int getbuffersize(char** buffer){//전체 파일을 줄의 갯수 반환
+    int i=0, size = 0;
+    while(buffer[i++]!=NULL){
+        size++;
+    }
+    return size;
+}
+
+int getarraysize(int* arr){//KMP의 반환값의 크기 반환
+    int i = 0, size = 0;
+    if(arr[0] == 0){
+        size = 1;
+        if(arr[1] != 0){
+            while(arr[++i] != 0)
+                size++;
+        }
+    }
+    else{
+        while(arr[i++] != 0)
+            size++;
+    }
+    return size;
+}
+
+void printline(char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
+    int arrsize = getarraysize(data_KMP);
+
+    for(int i = 0 ;i < strlen(line); i++){
+        move(linenum, i + 10);
+        for(int j = 0; j < arrsize; j++){
+            if(i == data_KMP[j]){
+                standout();
+            }
+            else if(i == data_KMP[j] + find_length){
+                standend();
+            }
+        }
+        addch(line[i]);
+    }
+    refresh();
+}
+
+void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
+    int buffersize = getbuffersize(buffer);
+    int arrsize = getarraysize(data_KMP);
+    if(i == 0){
+        printline(buffer[i], data_KMP, find_length, linenum);
+        move(linenum+2, 10);
+        addstr(buffer[i+1]);
+    }
+    else if(i == buffersize -1){
+        move(linenum - 2, 10);
+        addstr(buffer[i-1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+        move(linenum+2, 10);
+        addstr(blankstr);
+
+    }
+    else{
+        move(linenum - 2, 10);
+        addstr(buffer[i-1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+        move(linenum+2, 10);
+        addstr(buffer[i+1]);
+    }
+    refresh();
+    sleep(1);
 }
