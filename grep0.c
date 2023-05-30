@@ -91,6 +91,9 @@ int main(int argc, char* argv[])
 		}
 	}
     }
+    else if(argc == 6 && argv[1][1] == 'p'){
+    	
+    }
     return 0;
 }
 void displayScreen(FILE* fd, char* find, char* filename){
