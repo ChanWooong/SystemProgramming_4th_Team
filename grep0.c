@@ -50,8 +50,6 @@ int main(int argc, char* argv[])
   		} 
     	}
     	else { // 옵션이 없는 경우
-     		fd = fopen(argv[2], "r");
-    		strcpy(find,argv[1]);
     		makeUI();
     		option_none(argv[2],argv[1],strlen(argv[1])); // none option
             endwin();
