@@ -58,6 +58,7 @@ int getch() {
 }
 
 
+
 int main(int argc, char* argv[])
 {
     FILE* fd;
@@ -94,6 +95,7 @@ int main(int argc, char* argv[])
 	clear();
 
 	strcpy(find, argv[1]);
+	printf("Searching for [ %s ] \n\n", argv[1]);
 
         if (strstr(cur_line, argv[1]) != NULL) {
 	
@@ -102,18 +104,21 @@ int main(int argc, char* argv[])
 
             int n = strlen(cur_line);
             int m = strlen(find);
-	    
-	    
-	    printf("\n\n");
+	          
+	    int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
+	    if(strlen(pre_line[pre_index]) > 0) {
+		    printf("%s", pre_line[pre_index]);
+	    }
+	
 
-	    printf("print pre line\n\n");
+	    printf("\n");
 
 	    KMP(cur_line, find, n, m);
 	    printf("\n");
-
-	    strncpy(pre_line[index], cur_line, MAX);       
-	    index = (index+1)%BUFFERSIZ;
 	    
+	    strncpy(pre_line[index], cur_line, MAX);       
+	    index = (index + 1) % BUFFERSIZ;
+
 	    if(fgets(next_line, MAX, fd)!= NULL) {
 		   printf("%s", next_line);
 		   print_next_line = true;
@@ -125,6 +130,8 @@ int main(int argc, char* argv[])
             input = true;
 	}
 	else {
+		strncpy(pre_line[index], cur_line, MAX);
+		index = (index + 1) % BUFFERSIZ;
 		skip = true;
 	}
 
@@ -142,7 +149,7 @@ int main(int argc, char* argv[])
                            break;
                         }
                 else if(!isspace(ch)) {
-                           printf("\n\n\nn/N : next\nq/Q : quit\n\n\n");
+                           printf("Only n/N or q/Q !\n");
                         }
 	}
 	input = false;
