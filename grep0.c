@@ -73,14 +73,23 @@ int main(int argc, char* argv[])
     		if(option == 'l'){
     			strcpy(find,argv[2]);
     			option_l(find, strlen(find));
-  		}
+  		} 
     	}
     	else {
-    		printf("h");
-    		fd = fopen(argv[2], "r");
+     		fd = fopen(argv[2], "r");
     		strcpy(find,argv[1]);
     		displayScreen(fd,find,argv[2]);
     	}
+    }
+    else if(argc == 4){
+    		
+    	if(argv[1][0] == '-'){
+    		option = argv[1][1];	
+    		if(option == 'c'){
+    			strcpy(find, argv[2]);
+			option_c(argv[3], find,strlen(find));
+		}
+	}
     }
     return 0;
 }

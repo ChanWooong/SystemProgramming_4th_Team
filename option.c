@@ -26,6 +26,7 @@ void Strlwr(char string[]){ //option_i에 필요(대소문자 구별 X)
 // }
 
 // -r : 서브 디렉터리의 파일까지 모두 출력한다.
+/*
 void option_r(char *dir){
     DIR *dp;
     struct dirent *entry;
@@ -33,6 +34,7 @@ void option_r(char *dir){
     char buff[512];
     int i = 0;
     char* filelist[128];
+    char* findstr;
 
     if((dp = opendir(dir)) == NULL){
         return;
@@ -50,19 +52,19 @@ void option_r(char *dir){
         }
         else{
             sprintf(buff, "%s/%s", dir, entry->d_name);
-            option_none(fp, findstr, entry->d_name, int find_length);
+            option_none(findstr, entry->d_name, find_length);
             printf("%s\n", buff);
 
         }
     }
 }
-
+*/
 void option_none(char* filename, char* findstr, int find_length){
     FILE *fp;
     int cnt = 0, line_length;
     char* line, buffer[256];
 
-    fopen(filename, "r");
+    fp = fopen(filename, "r");
     while(1){
         line = fgets(buffer, 256, fp);
         if(line == NULL)
@@ -101,17 +103,19 @@ void option_c(char* filename, char* findstr, int find_length){
     char* line;
     char buffer[256];
     fp = fopen(filename, "r");
-
-    while(1){
-        line = fgets(buffer, 256, fp);
-        line_length = strlen(line);
-        if(line == NULL)
+    while(fgets(buffer, 256, fp)!=NULL){
+        if(buffer == NULL)
             break;
-        if(KMP(findstr, line, line_length, find_length) != NULL){//KMP의 리턴값이 NULL이 아니면, cnt++;
+        line_length = strlen(buffer);
+        line = buffer;
+        
+        if(strstr(buffer, findstr) != NULL){
+        //KMP의 리턴값이 NULL이 아니면, cnt++;
             cnt++;
         }
+        line = NULL;
     }
-    printf("%d", cnt);
+    printf("<%d>", cnt);
     //printf("line that have "%s" : %d\n", find, string);
     fclose(fp);
 }
@@ -212,7 +216,7 @@ void option_w(char* filename, char* findstr, int find_length){
         line = fgets(buffer, 256, fp);
         if(line == NULL)
             break;
-        line_length = strlen[256];
+        line_length = strlen(line);
 
         if(KMP(findstr, line, line_length, find_length) != NULL){
             //시작 index + strlen(findstr) + 1의 값이 ' ' || '\0' 일때만 출력

@@ -61,7 +61,8 @@ int* KMP(const char* text, const char* pattern, int m, int n)
         }
     }
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD*/
+int check = 0;
     for(int k = 0; k < strlen(text); k++){
 	if(k == arr[cnt]){
 		result[check] = k;
@@ -80,10 +81,8 @@ int* KMP(const char* text, const char* pattern, int m, int n)
     		break;
     	}
     }
-    printf("%d\n",cnt);
-=======
->>>>>>> 687aee923c6bdef44fa9d126b244f054bcefebc2
+/*=======
+>>>>>>> 687aee923c6bdef44fa9d126b244f054bcefebc2*/
     if(cnt == 0) return NULL;
-    
     else return result;
 }
