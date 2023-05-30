@@ -130,7 +130,11 @@ void displayScreen(FILE* fd, char* find, char* filename){
         	    int m = strlen(cur_line);
 
 	  	    printf("\n\n\n\n");
-	 	    printf("%s", pre_line[(index+1)%BUFFERSIZ]);
+			
+		    int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
+		    if(strlen(pre_line[per_index] > 0){
+		    	printf("%s\n", pre_line[pre_index]);
+		    }
 
 	  	    l_data = KMP(cur_line, find, m, n);
 	  	    
@@ -149,47 +153,43 @@ void displayScreen(FILE* fd, char* find, char* filename){
 				printf("%c",cur_line[k]);
     		    	}	
     		    	printf(COLOR_DEFAULT);
-	  	    }
+	  }
 		    //printf("%s", cur_line);	    
 
-            	    strncpy(pre_line[index], cur_line, MAX);
-            	    index = (index + 1) % BUFFERSIZ;
-            	    buf_line = buf_line < BUFFERSIZ ? buf_line + 1 : BUFFERSIZ;
-            	    if(!flag) {
-			while(1) {
-				printf("\n\nn : next q : quit\n\n\n");
-				int ch = getch();
-				if(tolower(ch) == 'n')
-					break;
-				else if(tolower(ch) == 'q') {
-					flag = 1;
-					break;
-				}
-				else if(!isspace(ch)) {
-					printf("n : next q : quit\n\n\n");
-				}
-		       }		
-		
-    	   	   }
-    	   	   else {
-	    		skip = true;
-    	  	   }
+       
+    	   else {
+		strncpy(pre_line[index], cur_line, MAX);
+            	index = (index + 1) % BUFFERSIZ;
+	    	skip = true;
+    	  }
     
-    		   if(flag){
-	   		 break;
-    		   }
+    	  if(flag){
+	  	 break;
+    	  }
+		       
+	  if(input) {
+		while(1) {
+			printf("\n\nn : next q : quit\n\n\n");
+			int ch = getch();
+			if(tolower(ch) == 'n')
+				break;
+			else if(tolower(ch) == 'q') {
+				flag = 1;
+				break;
+			}
+			else if(!isspace(ch)) {
+				printf("n : next q : quit\n\n\n");
+			}
 		}
+		input = false;
+    	   }
+	}
 		
-		 
+	if (!found) {
+      	 	printf("Cannot find pattern\n");
+   	}
 
-   
-		}
-		
-		  if (!found) {
-      	 		printf("Cannot find pattern\n");
-   	 	   }
-
-    		   fclose(fd);
+    	fclose(fd);
 	}
 }
     
