@@ -60,21 +60,17 @@ void option_r(char *dir){
 }
 */
 void option_none(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    int cnt = 0, line_length;
-    char* line, buffer[256];
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-    fp = fopen(filename, "r");
-    while(1){
-        line = fgets(buffer, 256, fp);
-        if(line == NULL)
-            break;
-        line_length = strlen(line);
-        if(KMP(buffer, findstr, line_length, find_length) != NULL){//KMP의 리턴값이 NULL이 아니면 출력
-            //출력
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+            print_threeline(i, buffer, data, find_length, 8);
         }
     }
-    fclose(fp);
 }
 
 void option_all(FILE* fp, char* findstr, int find_length){
@@ -122,105 +118,88 @@ void option_c(char* filename, char* findstr, int find_length){
 
 // -i : 문자열의 대소문자를 구분하지 않는다.
 void option_i(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    char* line, buffer[256];
-    int line_length;
-    
-    fp = fopen(filename, "r");
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-    while(1){
-        line = fgets(buffer, 256, fp);
-        if(line == NULL)
-            break;
-        line_length = strlen(line);
-        Strlwr(buffer);
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        Strlwr(buffer[i]);
         Strlwr(findstr);
-        if(KMP(findstr, buffer, line_length, find_length) != NULL){//KMP의 리턴값이 NULL이 아니면, cnt++;
-            
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+            print_threeline(i, buffer, data, find_length, 8);
         }
     }
-    fclose(fp);
 }
 
 // -h : 파일 이름을 출력하지 않는다.
 void option_h(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    char* line, buffer[256];
-    int line_length;
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-    fp = fopen(filename, "r");
-
-    while(1){
-        line = fgets(buffer, 256, fp);
-        line_length = strlen(line);
-        if(line == NULL){
-            break;
-        }
-        if(KMP(findstr, line, line_length, find_length) != NULL){
-            //출력
-
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        Strlwr(buffer[i]);
+        Strlwr(findstr);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+            print_threeline(i, buffer, data, find_length, 8);
         }
     }
-    fclose(fp);
 }
 
 // -v : 입력한 패턴이 포함되지 않은 문자열을 출력한다.
 void option_v(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    char* line, buffer[256];
-    int line_length;
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-    fp = fopen(filename, "r");
-    while(1){
-        line = fgets(buffer, 256, fp);
-        line_length = strlen(line);
-        if(line == NULL){
-            break;
-        }
-        if(KMP(findstr, line, line_length, find_length) == NULL){    //KMP의 리턴값이 NULL이면, 문자열 출력
-            printf("%s", line);
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        Strlwr(buffer[i]);
+        Strlwr(findstr);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data == NULL){
+            print_threeline(i, buffer, data, find_length, 8);
         }
     }
-    fclose(fp);
 }
 
 // -n : 일치한 문자열이 포함된 라인 번호를 출력한다.
 void option_n(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    int linecnt = 0, line_length;
-    char* line, buffer[256];
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-    fp = fopen(filename, "r");
-    while(1){
-        line = fgets(buffer, 256, fp);    //fgets와 함께 linecnt++;
-        if(line == NULL){
-            break;
-        }
-        line_length = strlen(line);
-        linecnt++;
-        if(KMP(findstr, line, line_length, find_length) != NULL){//KMP의 리턴값이 1이면, linecnt출력;
-            printf("%d ", linecnt);
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+            printf("%d", i+1);
         }
     }
-    fclose(fp);
+
 }
 
 // -w : 입력한 문자열이 독립된 단어로 존재하는 경우만 출력한다.
 void option_w(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    char* line, buffer[256];
-    int line_length;
-    
-    fp = fopen(filename, "r");
-    while(1){
-        line = fgets(buffer, 256, fp);
-        if(line == NULL)
-            break;
-        line_length = strlen(line);
+    char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
 
-        if(KMP(findstr, line, line_length, find_length) != NULL){
-            //시작 index + strlen(findstr) + 1의 값이 ' ' || '\0' 일때만 출력
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+            int data_size = getarraysize(data);
+            for(int j = 0;j < data_size;j++){
+                if(data[j] + find_length + 1 == '\n' || data[j] + find_length + 1 == '\n' )
+                {
+                    print_threeline(i, buffer, data, find_length, 8);
+                }
+            }
         }
     }
-    fclose(fp);
 }
