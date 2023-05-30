@@ -74,6 +74,7 @@ int* KMP(const char* text, const char* pattern, int m, int n)
     		break;
     	}
     }
+    printf("%d\n",cnt);
     if(cnt == 0) return NULL;
     else return result;
 }
