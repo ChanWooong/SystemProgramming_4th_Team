@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <signal.h>
 #include <ctype.h>
+#include <curses.h>
 #include <termios.h>
 
  
@@ -15,6 +16,7 @@
 #define MAX 3000
 #define COLOR_DEFAULT "\033[49m"
 #define COLOR_ORANGE "\033[43m"
+#define blankstr "                             "
 
 
 //출력에 필요한 함수와 전역변수
@@ -22,20 +24,9 @@ char* data_buffer[100];
 char** getdata(char* filename);
 int getbuffersize(char** buffer);
 int getarraysize(int* arr);
-void printline(char* line, int* start_index, int find_length, int linenum);
-void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
-#define blankstr "                             "
-
-
-#ifdef _WIN32
-void clear() {
-	system("cls");
-}
-#else
-void clear() {
-	printf("\033[H\033[J");
-}
-#endif
+void makeUI();
+//void printline(char* line, int* start_index, int find_length, int linenum);
+//void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
 volatile sig_atomic_t flag = 0;
 
@@ -62,17 +53,17 @@ void set_mode(int fd, struct termios* prev_term) {
 }
 
 
-void displayScreen(FILE* fd, char* find, char* filename);
+//void displayScreen(FILE* fd, char* find, char* filename);
 void option_l(char* findstr, int find_length);
 void restore(int fd, struct termios* prev_term);
-int getch();
 
 int main(int argc, char* argv[])
 {   
+
     FILE* fd;
     char find[MAX];
     char option;
-    
+    char** fileArr;
     
     if(argc < 3){
     	printf("check the number of parameters.\n");
@@ -90,7 +81,10 @@ int main(int argc, char* argv[])
     	else {
      		fd = fopen(argv[2], "r");
     		strcpy(find,argv[1]);
-    		displayScreen(fd,find,argv[2]);
+    		makeUI();
+    		fileArr = getdata(argv[2]);
+
+    		//displayScreen(fd,find,argv[2]);
     	}
     }
     else if(argc == 4){
@@ -108,106 +102,36 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-void displayScreen(FILE* fd, char* find, char* filename){
-    int *data;
-    char buffer[MAX] = {0};
-    char cur_line[MAX] = {0};
-    char pre_line[BUFFERSIZ][MAX] = {0};
-    int index = 0;
-    int buf_line = 0;
-    bool found = false;
-    bool skip = false;
-    int input = false;
-    
-    
-    fread(buffer, 1, MAX, fd);
-    int n = strlen(find);
-    int m = strlen(buffer);
-    fclose(fd);
-    
-    data = KMP(buffer, find, m, n);
-    printf("[%d]",data[0]);
-   if(data != NULL){
-   	fd = fopen(filename, "r");
-   	setup();
+void makeUI(){
+	WINDOW *win;
+    	WINDOW *win2;
+  	WINDOW *title;
+    	WINDOW *content;
+	initscr();
+	clear();
+	win = newwin(23,60,2,7);
+	box(win, ACS_VLINE, ACS_HLINE);
 	
-    	while (fgets(cur_line, MAX, fd) != NULL)
-    	{	
-    		int *l_data;
-			clear();
-
-        	if (strstr(cur_line, find) != NULL)
-        	{
-        	    found = true;
-		    	skip = true;
-
-        	    int n = strlen(find);
-        	    int m = strlen(cur_line);
-
-	  	    	printf("\n\n\n\n");
-			
-		    	int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
-		    	if(strlen(pre_line[pre_index]) > 0){
-		    		printf("%s\n", pre_line[pre_index]);
-		    	}
-
-	  	    	l_data = KMP(cur_line, find, m, n);
-	  	    
-	  	    	if(l_data != NULL){
-	  	    		int cnt = 0;
-    		   		for(int k = 0; k < m; k++){
-						if(k == l_data[cnt]){
-						printf(COLOR_ORANGE);	
-						}
-						if(k == l_data[cnt]+n){
-							printf(COLOR_DEFAULT);
-							cnt++;
-							k--;
-							continue;
-						}
-						printf("%c",cur_line[k]);
-    		    	}	
-    		    	printf(COLOR_DEFAULT);
-	  			}
-		    	//printf("%s", cur_line);	    
-
-   			}
-    	   	else {
-				strncpy(pre_line[index], cur_line, MAX);
-            	index = (index + 1) % BUFFERSIZ;
-	    		skip = true;
-    	  	}
-    
-    		if(flag){
-	  	 		break;
-    	  	}
-		       
-	  		if(!flag) {
-				while(1) {
-					printf("\n\nn : next q : quit\n\n\n");
-					int ch = getch();
-					if(tolower(ch) == 'n')
-						break;
-					else if(tolower(ch) == 'q') {
-						flag = 1;
-						break;
-					}
-					else if(!isspace(ch)) {
-						printf("n : next q : quit\n\n\n");
-					}
-				}
-				input = false;
-    	   }
-		}	
-		if (!found) {
-      	 	printf("Cannot find pattern\n");
-   		}
-    	fclose(fd);
-	}
+	title = subwin(win,3,20,3,27);
+	box(title, ACS_VLINE, ACS_HLINE);
+	wmove(title,1,4);
+	waddstr(title,"find pattern");
+	
+	win2 = subwin(win,5,58,19,8);
+	box(win2, ACS_VLINE, ACS_HLINE);
+	wmove(win2,2,10);
+	waddstr(win2,"Please press (next : 'n' | quit : 'q')");
+	
+	content = subwin(win,13,58,6,8);
+	box(content, ACS_VLINE, ACS_HLINE);
+	wmove(content, 2,2);
+	
+	wrefresh(win);
+	wrefresh(title);
+	wrefresh(win2);
+	sleep(100);
+	endwin(win);
 }
-    
-
-
 void option_l(char* findstr, int find_length){
 	
 	struct dirent *entry = NULL;
@@ -237,15 +161,6 @@ void option_l(char* findstr, int find_length){
 
 void restore(int fd, struct termios* prev_term) {
 	tcsetattr(fd, TCSANOW, prev_term);
-}
-
-int getch() {
-	int ch;
-	struct termios old_term;
-	set_mode(STDIN_FILENO, &old_term);
-	ch = getchar();
-	restore(STDIN_FILENO, &old_term);
-	return ch;
 }
 
 
@@ -295,12 +210,12 @@ int getarraysize(int* arr){//KMP의 반환값의 크기 반환
     }
     return size;
 }
-
-void printline(char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
+/*
+void printline(WINDOW *win, char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
     int arrsize = getarraysize(data_KMP);
 
     for(int i = 0 ;i < strlen(line); i++){
-        move(linenum, i + 10);
+        wmove(win, linenum, i + 10);
         for(int j = 0; j < arrsize; j++){
             if(i == data_KMP[j]){
                 standout();
@@ -314,29 +229,30 @@ void printline(char* line, int* data_KMP, int find_length, int linenum){//문자
     refresh();
 }
 
-void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
+void print_threeline(WINDOW *win, int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
     int buffersize = getbuffersize(buffer);
     int arrsize = getarraysize(data_KMP);
     if(i == 0){
-        printline(buffer[i], data_KMP, find_length, linenum);
-        move(linenum+2, 10);
-        addstr(buffer[i+1]);
+        printline(win,buffer[i], data_KMP, find_length, linenum);
+        wmove(win,linenum+2, 10);
+        waddstr(win,buffer[i+1]);
     }
     else if(i == buffersize -1){
-        move(linenum - 2, 10);
-        addstr(buffer[i-1]);
-        printline(buffer[i], data_KMP, find_length, linenum);
-        move(linenum+2, 10);
-        addstr(blankstr);
+        wmove(win,linenum - 2, 10);
+        waddstr(win,buffer[i-1]);
+        printline(win,buffer[i], data_KMP, find_length, linenum);
+        wmove(win,linenum+2, 10);
+        waddstr(win,blankstr);
 
     }
     else{
-        move(linenum - 2, 10);
-        addstr(buffer[i-1]);
-        printline(buffer[i], data_KMP, find_length, linenum);
-        move(linenum+2, 10);
-        addstr(buffer[i+1]);
+        wmove(win,linenum - 2, 10);
+        waddstr(win,buffer[i-1]);
+        printline(win,buffer[i], data_KMP, find_length, linenum);
+        wmove(win,linenum+2, 10);
+        waddstr(win,buffer[i+1]);
     }
     refresh();
     sleep(1);
 }
+*/
