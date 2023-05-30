@@ -93,7 +93,6 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-
 void displayScreen(FILE* fd, char* find, char* filename){
     int *data;
     char buffer[MAX] = {0};
@@ -119,76 +118,74 @@ void displayScreen(FILE* fd, char* find, char* filename){
     	while (fgets(cur_line, MAX, fd) != NULL)
     	{	
     		int *l_data;
-		clear();
+			clear();
 
         	if (strstr(cur_line, find) != NULL)
         	{
         	    found = true;
-		    skip = true;
+		    	skip = true;
 
         	    int n = strlen(find);
         	    int m = strlen(cur_line);
 
-	  	    printf("\n\n\n\n");
+	  	    	printf("\n\n\n\n");
 			
-		    int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
-		    if(strlen(pre_line[per_index] > 0){
-		    	printf("%s\n", pre_line[pre_index]);
-		    }
+		    	int pre_index = (index-1+BUFFERSIZ)%BUFFERSIZ;
+		    	if(strlen(pre_line[per_index] > 0){
+		    		printf("%s\n", pre_line[pre_index]);
+		    	}
 
-	  	    l_data = KMP(cur_line, find, m, n);
+	  	    	l_data = KMP(cur_line, find, m, n);
 	  	    
-	  	    if(l_data != NULL){
-	  	    	int cnt = 0;
-    		   	for(int k = 0; k < m; k++){
-				if(k == l_data[cnt]){
-					printf(COLOR_ORANGE);	
-				}
-				if(k == l_data[cnt]+n){
-					printf(COLOR_DEFAULT);
-					cnt++;
-					//k--;
-					//continue;
-				}
-				printf("%c",cur_line[k]);
+	  	    	if(l_data != NULL){
+	  	    		int cnt = 0;
+    		   		for(int k = 0; k < m; k++){
+						if(k == l_data[cnt]){
+						printf(COLOR_ORANGE);	
+						}
+						if(k == l_data[cnt]+n){
+							printf(COLOR_DEFAULT);
+							cnt++;
+							//k--;
+							//continue;
+						}
+						printf("%c",cur_line[k]);
     		    	}	
     		    	printf(COLOR_DEFAULT);
-	  }
-		    //printf("%s", cur_line);	    
+	  			}
+		    	//printf("%s", cur_line);	    
 
-       
-    	   else {
-		strncpy(pre_line[index], cur_line, MAX);
+   			}
+    	   	else {
+				strncpy(pre_line[index], cur_line, MAX);
             	index = (index + 1) % BUFFERSIZ;
-	    	skip = true;
-    	  }
+	    		skip = true;
+    	  	}
     
-    	  if(flag){
-	  	 break;
-    	  }
+    		if(flag){
+	  	 		break;
+    	  	}
 		       
-	  if(input) {
-		while(1) {
-			printf("\n\nn : next q : quit\n\n\n");
-			int ch = getch();
-			if(tolower(ch) == 'n')
-				break;
-			else if(tolower(ch) == 'q') {
-				flag = 1;
-				break;
-			}
-			else if(!isspace(ch)) {
-				printf("n : next q : quit\n\n\n");
-			}
-		}
-		input = false;
+	  		if(input) {
+				while(1) {
+					printf("\n\nn : next q : quit\n\n\n");
+					int ch = getch();
+					if(tolower(ch) == 'n')
+						break;
+					else if(tolower(ch) == 'q') {
+						flag = 1;
+						break;
+					}
+					else if(!isspace(ch)) {
+						printf("n : next q : quit\n\n\n");
+					}
+				}
+				input = false;
     	   }
-	}
-		
-	if (!found) {
+		}	
+		if (!found) {
       	 	printf("Cannot find pattern\n");
-   	}
-
+   		}
     	fclose(fd);
 	}
 }
