@@ -20,13 +20,18 @@
 
 
 //출력에 필요한 함수와 전역변수
+WINDOW *win;
+WINDOW *win2;
+WINDOW *title;
+WINDOW *content;
+
 char* data_buffer[100];
 char** getdata(char* filename);
 int getbuffersize(char** buffer);
 int getarraysize(int* arr);
 void makeUI();
-//void printline(char* line, int* start_index, int find_length, int linenum);
-//void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
+void printline(char* line, int* start_index, int find_length, int linenum);
+void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
 volatile sig_atomic_t flag = 0;
 
@@ -103,10 +108,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 void makeUI(){
-	WINDOW *win;
-    	WINDOW *win2;
-  	WINDOW *title;
-    	WINDOW *content;
 	initscr();
 	clear();
 	win = newwin(23,60,2,7);
@@ -130,7 +131,7 @@ void makeUI(){
 	wrefresh(title);
 	wrefresh(win2);
 	sleep(100);
-	endwin(win);
+	endwin();
 }
 void option_l(char* findstr, int find_length){
 	
@@ -210,8 +211,8 @@ int getarraysize(int* arr){//KMP의 반환값의 크기 반환
     }
     return size;
 }
-/*
-void printline(WINDOW *win, char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
+
+void printline(char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
     int arrsize = getarraysize(data_KMP);
 
     for(int i = 0 ;i < strlen(line); i++){
@@ -229,30 +230,30 @@ void printline(WINDOW *win, char* line, int* data_KMP, int find_length, int line
     refresh();
 }
 
-void print_threeline(WINDOW *win, int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
+void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
     int buffersize = getbuffersize(buffer);
     int arrsize = getarraysize(data_KMP);
     if(i == 0){
-        printline(win,buffer[i], data_KMP, find_length, linenum);
-        wmove(win,linenum+2, 10);
-        waddstr(win,buffer[i+1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+        wmove(content,linenum+2, 10);
+        waddstr(content,buffer[i+1]);
     }
     else if(i == buffersize -1){
-        wmove(win,linenum - 2, 10);
-        waddstr(win,buffer[i-1]);
-        printline(win,buffer[i], data_KMP, find_length, linenum);
-        wmove(win,linenum+2, 10);
-        waddstr(win,blankstr);
+        wmove(content,linenum - 2, 10);
+        waddstr(content,buffer[i-1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+        wmove(content,linenum+2, 10);
+        waddstr(content,blankstr);
 
     }
     else{
-        wmove(win,linenum - 2, 10);
-        waddstr(win,buffer[i-1]);
-        printline(win,buffer[i], data_KMP, find_length, linenum);
-        wmove(win,linenum+2, 10);
-        waddstr(win,buffer[i+1]);
+        wmove(content,linenum - 2, 10);
+        waddstr(content,buffer[i-1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+        wmove(content,linenum+2, 10);
+        waddstr(content,buffer[i+1]);
     }
     refresh();
     sleep(1);
 }
-*/
+
