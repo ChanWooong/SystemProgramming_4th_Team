@@ -21,6 +21,13 @@
 
 3.각 option 별로 각기 다른 command 수행.
 
+------
+### 사용한 개념
+__pipe (O)__
+__signal handling (O)__
+__curses(window) (O)__
+__fork (O) (when using a pipe)__
+__file and directory handling (O)__
 
 ------
 
