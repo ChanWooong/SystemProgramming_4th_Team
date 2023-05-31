@@ -45,6 +45,27 @@ char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
     return result_string;
 }
 
+void basicGrep(char pattern[]){
+	char line[MAX];
+	char data[100][MAX];
+	int y = 2;
+	int cnt = 0;
+	init();
+	while(fgets(line, sizeof(line), stdin) != NULL){
+		if(strstr(line, pattern) != NULL){
+			strcpy(data[cnt++], line);
+		}
+	}
+	init();
+	wmove(content, y,2);
+	for(int i = 0 ; i<cnt; i++){
+		waddstr(content, data[i]);
+		if(n_q() == 0) break;
+	}
+	sleep(20);
+	
+
+}
 
 // void option_l(char* filename, char* findstr, int find_length){
 //     FILE *fp;

@@ -6,6 +6,9 @@ WINDOW *win;
 WINDOW *win2;
 WINDOW *title;
 WINDOW *content;
+int pipeLine(char child[], char option[]);
+void basicGrep(char pattern[]);
+
 
 void option_none(char* filename, char* findstr, int find_length);
 
