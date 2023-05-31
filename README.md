@@ -19,8 +19,7 @@
 
 2.window 형태로 screen을 생성하여 UI를 디자인하고, waddstr을 이용하여 데이터를 화면에 출력.
 
-
-3. 각 option 별로 각기 다른 command 수행.
+3.각 option 별로 각기 다른 command 수행.
 
 
 ------
