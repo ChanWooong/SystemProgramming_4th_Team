@@ -5,17 +5,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include <stdbool.h>
 #include <signal.h>
 #include <ctype.h>
 #include <curses.h>
 #include <termios.h>
 
- 
-#define BUFFERSIZ 3
 #define MAX 3000
-#define COLOR_DEFAULT "\033[49m"
-#define COLOR_ORANGE "\033[43m"
 #define blankstr "                               "
 
 
@@ -26,88 +21,59 @@ WINDOW *title;
 WINDOW *content;
 
 char* data_buffer[100];
+void makeUI();
 char** getdata(char* filename);
 int getbuffersize(char** buffer);
 int getarraysize(int* arr);
-void makeUI();
 void printline(char* line, int* start_index, int find_length, int linenum);
 void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
-volatile sig_atomic_t flag = 0;
-
-void signal_handler(int signal) {
-	if(signal == SIGINT)
-		flag = 1;
-}
-
-
-void setup() {
-	struct sigaction sa;
-	sa.sa_handler = signal_handler;
-	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
-}
-
-void set_mode(int fd, struct termios* prev_term) {
-	struct termios term;
-	tcgetattr(fd, prev_term);
-	term = *prev_term;
-	term.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(fd, TCSANOW, &term);
-}
-
-
-//void displayScreen(FILE* fd, char* find, char* filename);
 void option_l(char* findstr, int find_length);
 void restore(int fd, struct termios* prev_term);
 
 int main(int argc, char* argv[])
 {   
-
-    FILE* fd;
     char find[MAX];
     char option;
     
     if(argc < 3){
     	printf("check the number of parameters.\n");
-	exit(1);
+	    exit(1);
     }
     
     else if(argc == 3){
-    	if(argv[1][0] == '-'){
+    	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];
     		if(option == 'l'){
     			strcpy(find,argv[2]);
     			option_l(find, strlen(find));
   		} 
     	}
-    	else {
+    	else { // 옵션이 없는 경우
      		fd = fopen(argv[2], "r");
     		strcpy(find,argv[1]);
     		makeUI();
-    		option_none(argv[2],argv[1],strlen(argv[1])); // none option 케이스 호출
-			endwin();
-    		//displayScreen(fd,find,argv[2]);
+    		option_none(argv[2],argv[1],strlen(argv[1])); // none option
+            endwin();
     	}
     }
     else if(argc == 4){
-    		
-    	if(argv[1][0] == '-'){
+    	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];	
     		if(option == 'c'){
-    			strcpy(find, argv[2]);
-				option_c(argv[3], find,strlen(find));
+				option_c(argv[3], argv[2],strlen(argv[2])); // c option
 			}
 			if(option == 'i'){
 				makeUI();
-				option_i(argv[3],argv[2],strlen(argv[2]));
+				option_i(argv[3],argv[2],strlen(argv[2])); // i option
 			}
 		}
+        endwin();
     }
     else if(argc == 6 && argv[1][1] == 'p'){
     	
     }
+
     return 0;
 }
 void makeUI(){ //UI를 window로 구현.
@@ -162,11 +128,6 @@ void option_l(char* findstr, int find_length){
 	}
 	printf("--------------------------------------\n");
 }
-
-void restore(int fd, struct termios* prev_term) {
-	tcsetattr(fd, TCSANOW, prev_term);
-}
-
 
 char** getdata(char* filename){//파일을 열어 char*배열에 파일 내용 넣어 반환
 	FILE* fp;
