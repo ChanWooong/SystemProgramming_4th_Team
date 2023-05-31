@@ -48,27 +48,6 @@ char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
     return result_string;
 }
 
-void basicGrep(char pattern[]){
-	char line[MAX];
-	char data[100][MAX];
-	int y = 2;
-	int cnt = 0;
-	init();
-	while(fgets(line, sizeof(line), stdin) != NULL){
-		if(strstr(line, pattern) != NULL){
-			strcpy(data[cnt++], line);
-		}
-	}
-	init();
-	wmove(content, y,2);
-	for(int i = 0 ; i<cnt; i++){
-		waddstr(content, data[i]);
-		if(n_q() == 0) break;
-	}
-	sleep(20);
-	
-
-}
 
 // -r : 서브 디렉터리의 파일까지 모두 출력한다.
 void option_r(char*findstr, int find_length){
@@ -101,7 +80,7 @@ void option_none(char* filename, char* findstr, int find_length){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
-            print_threeline(i, buffer, data, find_length, 5);
+            print_fiveline(i, buffer, data, find_length, 5);
         }
         else{
             continue;
@@ -212,7 +191,7 @@ void option_i(char* filename, char* findstr, int find_length){
         lwr_find = Strlwr(findstr);
         data = KMP(lwr_line, lwr_find, line_length, find_length);
         if(data != NULL){
-            print_threeline(i, buffer, data, find_length, 5);
+            print_fiveline(i, buffer, data, find_length, 5);
         }
         else{
             continue;
@@ -238,7 +217,7 @@ void option_v(char* filename, char* findstr, int find_length){
             continue;
         }
         else{
-            print_threeline(i, buffer, data, find_length, 8);
+            print_fiveline(i, buffer, data, find_length, 8);
         }
         if(tmp = controll()==1)
             continue;
@@ -300,13 +279,13 @@ void option_w(char* filename, char* findstr, int find_length){
                     l = data[j] -1;
                     if((buffer[i][k] < 65 || buffer[i][k] > 90) && (buffer[i][k] < 97 || buffer[i][k] > 122)){   
                         if((buffer[i][l] < 65 || buffer[i][l] > 90) && (buffer[i][l] < 97 || buffer[i][l] > 122))
-                            print_threeline(i, buffer, data, find_length, 5);
+                            print_fiveline(i, buffer, data, find_length, 5);
                         break;
                     }
                 }
                 else{
                     if((buffer[i][k] < 65 || buffer[i][k] > 90) && (buffer[i][k] < 97 || buffer[i][k] > 122)){   
-                        print_threeline(i, buffer, data, find_length, 5);
+                        print_fiveline(i, buffer, data, find_length, 5);
                         break;
                     }
                 }

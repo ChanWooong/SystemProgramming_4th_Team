@@ -35,13 +35,14 @@ int main(int argc, char* argv[])
 {   
     char find[MAX], filename[64];
     char option;
-    if(argc == 2){
-    	makeUI();
-    	basicGrep(argv[1]);
-    	endwin();
+    
+    if(argc < 3){
+    	printf("check the number of parameters.\n");
+	    exit(1);
     }
-
-    if(argc == 3){
+    
+    else if(argc == 3){
+		strcpy(find, argv[2]);
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];
     		if(option == 'l'){
@@ -94,13 +95,12 @@ int main(int argc, char* argv[])
 		}
         endwin();
     }
-    if(argc == 5 && argv[1][1] == 'p'){
-     	pipeLine(argv[2], argv[4]);
+    else if(argc == 6 && argv[1][1] == 'p'){
+    	
     }
 
     return 0;
 }
-
 void makeUI(){ //UI를 window로 구현.
 	initscr();
 	clear();
@@ -207,28 +207,57 @@ void printline(char* line, int* data_KMP, int find_length, int linenum){//문자
 	}
 }
 
-void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
+void print_fiveline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태
     int buffersize = getbuffersize(buffer);
     int arrsize = getarraysize(data_KMP);
     if(i == 0){
         printline(buffer[i], data_KMP, find_length, linenum);
         wmove(content,linenum+2, 2);
         waddstr(content,buffer[i+1]);
+		wmove(content, linenum+3, 2);
+		waddstr(content, buffer[i+2]);
     }
+	else if(i == 1){
+		wmove(content,linenum-2, 2);
+        waddstr(content,buffer[i+1]);
+		printline(buffer[i], data_KMP, find_length, linenum);
+        wmove(content,linenum+2, 2);
+        waddstr(content,buffer[i+1]);
+		wmove(content, linenum+3, 2);
+		waddstr(content, buffer[i+2]);
+	}
     else if(i == buffersize -2){
+		wmove(content,linenum - 3, 2);
+        waddstr(content,buffer[i-2]);
+        wmove(content,linenum - 2, 2);
+        waddstr(content,buffer[i-1]);
+        printline(buffer[i], data_KMP, find_length, linenum);
+		wmove(content,linenum + 2, 2);
+        waddstr(content,buffer[i-1]);
+        wmove(content,linenum+3, 2);
+        waddstr(content,blankstr);
+
+    }
+	else if(i == buffersize -3){
         wmove(content,linenum - 2, 2);
         waddstr(content,buffer[i-1]);
         printline(buffer[i], data_KMP, find_length, linenum);
         wmove(content,linenum+2, 2);
         waddstr(content,blankstr);
+		wmove(content,linenum+3, 2);
+        waddstr(content,blankstr);
 
     }
     else{
+		wmove(content,linenum - 3, 2);
+        waddstr(content,buffer[i-2]);
         wmove(content,linenum - 2, 2);
         waddstr(content,buffer[i-1]);
         printline(buffer[i], data_KMP, find_length, linenum);
         wmove(content,linenum+2, 2);
         waddstr(content,buffer[i+1]);
+		wmove(content,linenum+3, 2);
+        waddstr(content,buffer[i+2]);
     }
 }
 

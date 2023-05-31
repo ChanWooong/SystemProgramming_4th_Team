@@ -6,16 +6,13 @@ WINDOW *win;
 WINDOW *win2;
 WINDOW *title;
 WINDOW *content;
-int pipeLine(char child[], char option[]);
-void basicGrep(char pattern[]);
-
 
 void option_none(char* filename, char* findstr, int find_length);
 
-void option_all(FILE* fp, char* findstr, int find_length);
+void option_all(char* findstr, int find_length);
 
 // -r : 서브 디렉터리의 파일까지 모두 출력한다.
-void option_r(char *dir);
+void option_r(char *findstr, int find_length);
 
 // -c : 문자열이 포함된 라인 개수를 표시한다.
 void option_c(char* filename, char* findstr, int find_length);
@@ -47,5 +44,5 @@ int getarraysize(int* arr);
 
 void printline(char* line, int* start_index, int find_length, int linenum);
 
-void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
+void print_fiveline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
