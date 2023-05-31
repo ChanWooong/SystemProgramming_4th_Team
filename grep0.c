@@ -73,6 +73,10 @@ int main(int argc, char* argv[])
 				makeUI();
 				option_v(argv[3],argv[2],strlen(argv[2])); // n option
 			}
+			if(option == 'w'){
+				makeUI();
+				option_w(argv[3],argv[2],strlen(argv[2])); // n option
+			}
 		}
         endwin();
     }

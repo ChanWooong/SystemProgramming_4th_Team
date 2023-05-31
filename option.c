@@ -279,27 +279,43 @@ void option_n(char* filename, char* findstr, int find_length){
     	
     	if(n_q() == 0) break; 	
     }
-    
-
 }
-
 // -w : 입력한 문자열이 독립된 단어로 존재하는 경우만 출력한다.
 void option_w(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
-
-    for(int i = 0; i<buffer_size; i++){
+    int k, l;
+    char last[256];
+    for(int i = 0; i < buffer_size; i++){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
             int data_size = getarraysize(data);
-            for(int j = 0;j < data_size;j++){
-                if(data[j] + find_length + 1 == '\n' || data[j] + find_length + 1 == '\n' )
-                {
-                    print_threeline(i, buffer, data, find_length, 8);
+            for(int j = 0; j < data_size; j++){
+                k = data[j] + find_length;
+                if(data[j] != 0){
+                    l = data[j] -1;
+                    if((buffer[i][k] < 65 || buffer[i][k] > 90) && (buffer[i][k] < 97 || buffer[i][k] > 122)){   
+                        if((buffer[i][l] < 65 || buffer[i][l] > 90) && (buffer[i][l] < 97 || buffer[i][l] > 122))
+                            print_threeline(i, buffer, data, find_length, 5);
+                        break;
+                    }
+                }
+                else{
+                    if((buffer[i][k] < 65 || buffer[i][k] > 90) && (buffer[i][k] < 97 || buffer[i][k] > 122)){   
+                        print_threeline(i, buffer, data, find_length, 5);
+                        break;
+                    }
                 }
             }
         }
+        else{
+            continue;
+        }
+        if(n_q() == 0) 
+            break;
+        else
+            continue;
     }
 }
