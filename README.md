@@ -17,8 +17,7 @@
 
 1.KMP 알고리즘을 사용하여 file의 content에서 pattern이 존재하는 부분의 시작 번호를 배열로 main에 호출.
 
-
-2. window 형태로 screen을 생성하여 UI를 디자인하고, waddstr을 이용하여 데이터를 화면에 출력.
+2.window 형태로 screen을 생성하여 UI를 디자인하고, waddstr을 이용하여 데이터를 화면에 출력.
 
 
 3. 각 option 별로 각기 다른 command 수행.
