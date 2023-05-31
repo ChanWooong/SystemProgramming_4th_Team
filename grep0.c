@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     		strcpy(find,argv[1]);
     		makeUI();
     		option_none(argv[2],argv[1],strlen(argv[1])); // none option 케이스 호출
-		endwin();
+			endwin();
     		//displayScreen(fd,find,argv[2]);
     	}
     }
@@ -97,13 +97,13 @@ int main(int argc, char* argv[])
     		option = argv[1][1];	
     		if(option == 'c'){
     			strcpy(find, argv[2]);
-			option_c(argv[3], find,strlen(find));
+				option_c(argv[3], find,strlen(find));
+			}
+			if(option == 'i'){
+				makeUI();
+				option_i(argv[3],argv[2],strlen(argv[2]));
+			}
 		}
-		if(option == 'i'){
-			makeUI();
-			option_i(argv[3],argv[2],strlen(argv[2]));
-		}
-	}
     }
     else if(argc == 6 && argv[1][1] == 'p'){
     	
@@ -255,6 +255,5 @@ void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int l
         wmove(content,linenum+2, 2);
         waddstr(content,buffer[i+1]);
     }
-    sleep(1);
 }
 

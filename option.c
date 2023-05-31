@@ -17,7 +17,7 @@ void init(){
 	wrefresh(win);
 	wrefresh(title);
 	wrefresh(win2);
-        wrefresh(content);
+    wrefresh(content);
 }
 int n_q(){
 	wrefresh(content);
@@ -29,16 +29,19 @@ int n_q(){
 	}
 	if(tolower(ch) == 'q') {
 		clear();
-		sleep(2);
+		//sleep(2);
 		return 0;
 	}
 }
-void Strlwr(char string[]){ //option_i에 필요(대소문자 구별 X)
+
+char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
     int i = 0;
-    while(string[i] != '\0'){
-        string[i] = (char)tolower(string[i]);
-        i++;
+    char* result_string = (char*)malloc(sizeof(char) * strlen(string));
+    //printf("%s", string);
+    for(int k = 0; k<strlen(string);k++){
+        result_string[k] = tolower(string[k]);
     }
+    return result_string;
 }
 
 
@@ -87,7 +90,7 @@ void option_none(char* filename, char* findstr, int find_length){
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
     for(int i = 0; i<buffer_size; i++){
-	 init(); 
+	    init(); 
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
@@ -145,25 +148,23 @@ void option_c(char* filename, char* findstr, int find_length){
 // -i : 문자열의 대소문자를 구분하지 않는다.
 void option_i(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
+    char* lwr_line, *lwr_find;
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
 
     for(int i = 0; i<buffer_size; i++){
     	init();
     	line_length = strlen(buffer[i]);
-        Strlwr(buffer[i]);
-        Strlwr(findstr);
-        data = KMP(buffer[i], findstr, line_length, find_length);
+        lwr_line = Strlwr(buffer[i]);
+        lwr_find = Strlwr(findstr);
+        data = KMP(lwr_line, lwr_find, line_length, find_length);
         if(data != NULL){
             print_threeline(i, buffer, data, find_length, 5);
-        }
-        
+        } 
         if(n_q() == 0) break;
         else continue;
-        sleep(100);
     }
     clear();
-    
 }
 
 // -h : 파일 이름을 출력하지 않는다.
