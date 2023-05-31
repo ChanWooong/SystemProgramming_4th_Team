@@ -32,7 +32,7 @@ __command : ./grep (pattern) (filename)__
 
 (filename)에서 (pattern)을 하이라이트로 색칠해주는 기본적인 grep.
 
------
+---
 
 #### option -i
 
