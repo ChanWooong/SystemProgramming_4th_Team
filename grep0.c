@@ -65,6 +65,10 @@ int main(int argc, char* argv[])
 				makeUI();
 				option_i(argv[3],argv[2],strlen(argv[2])); // i option
 			}
+			if(option == 'n'){
+				makeUI();
+				option_n(argv[3],argv[2],strlen(argv[2])); // n option
+			}
 		}
         endwin();
     }

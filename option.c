@@ -206,14 +206,32 @@ void option_n(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
-
+    char find_linum[50][100];
+    int index=0;
+    init();
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
-            printf("%d", i+1);
+            sprintf(find_linum[index], "%d", i+1);
+            index++;
         }
     }
+    wmove(content,2,2);
+    waddstr(content, "the file name : ");
+    waddstr(content, filename);
+    wmove(content,3,2);
+    waddstr(content, "the line number of pattern");
+    int x = 2,y = 4;
+    for(int k = 0; k<index; k++){
+        wmove(content,y++,2);
+    	wstandout(content);
+    	waddstr(content,find_linum[k]);
+    	wstandend(content);
+    	
+    	if(n_q() == 0) break; 	
+    }
+    
 
 }
 
