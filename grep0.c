@@ -69,6 +69,10 @@ int main(int argc, char* argv[])
 				makeUI();
 				option_n(argv[3],argv[2],strlen(argv[2])); // n option
 			}
+            if(option == 'v'){
+				makeUI();
+				option_v(argv[3],argv[2],strlen(argv[2])); // n option
+			}
 		}
         endwin();
     }
@@ -101,7 +105,9 @@ void makeUI(){ //UI를 window로 구현.
 	wrefresh(title);
 	wrefresh(win2);
 	wrefresh(content);
-
+    
+    start_color();
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
 }
 
 void option_l(char* findstr, int find_length){
@@ -164,35 +170,49 @@ int getbuffersize(char** buffer){//전체 파일을 줄의 갯수 반환
 
 int getarraysize(int* arr){//KMP의 반환값의 크기 반환
     int i = 0, size = 0;
-    if(arr[0] == 0){
-        size = 1;
-        if(arr[1] != 0){
-            while(arr[++i] != 0)
-                size++;
-        }
-    }
-    else{
-        while(arr[i++] != 0)
-            size++;
-    }
+	if(arr != NULL){
+		if(arr[0] == 0){
+        	size = 1;
+        	if(arr[1] != 0){
+            	while(arr[++i] != 0)
+            	size++;
+        	}
+    	}
+    	else{
+        	while(arr[i++] != 0)
+            	size++;
+    	}
+	}
+	else{
+		return 0;
+	}
+    
     return size;
 }
 
 void printline(char* line, int* data_KMP, int find_length, int linenum){//문자열 탐색 결과 출력
     int arrsize = getarraysize(data_KMP);
 
-    for(int i = 0 ;i < strlen(line); i++){
-        wmove(content, linenum, i + 2);
-        for(int j = 0; j < arrsize; j++){
-            if(i == data_KMP[j]){
-                wstandout(content);
-            }
-            else if(i == data_KMP[j] + find_length){
-                wstandend(content);
-            }
-        }
-        waddch(content,line[i]);
-    }
+    if(data_KMP != NULL){
+		for(int i = 0 ;i < strlen(line); i++){
+			wmove(content, linenum, i + 2);
+			for(int j = 0; j < arrsize; j++){
+				if(i == data_KMP[j]){
+					wstandout(content);
+				}
+				else if(i == data_KMP[j] + find_length){
+					wstandend(content);
+				}
+			}
+			waddch(content,line[i]);
+		}
+	}
+	else{
+		wmove(content, linenum, 2);
+		wattron(content, COLOR_PAIR(1));
+		waddstr(content, line);
+		wattroff(content, COLOR_PAIR(1));
+	}
 }
 
 void print_threeline(int i, char** buffer, int* data_KMP, int find_length, int linenum){//기본 출력 형태

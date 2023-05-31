@@ -96,6 +96,9 @@ void option_none(char* filename, char* findstr, int find_length){
         if(data != NULL){
             print_threeline(i, buffer, data, find_length, 5);
         }
+        else{
+            continue;
+        }
         if(n_q() == 0) break;
         else continue;
     }
@@ -160,6 +163,9 @@ void option_i(char* filename, char* findstr, int find_length){
         data = KMP(lwr_line, lwr_find, line_length, find_length);
         if(data != NULL){
             print_threeline(i, buffer, data, find_length, 5);
+        }
+        else{
+            continue;
         } 
         if(n_q() == 0) break;
         else continue;
@@ -179,6 +185,9 @@ void option_h(char* filename, char* findstr, int find_length){
         if(data != NULL){
             print_threeline(i, buffer, data, find_length, 8);
         }
+        else{
+            continue;
+        }
     }
 }
 
@@ -187,14 +196,20 @@ void option_v(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
-
-    for(int i = 0; i<buffer_size; i++){
+    for(int i = 0; i < buffer_size; i++){
+        init();
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
-        if(data == NULL){
+        if(data != NULL){
+            continue;
+        }
+        else{
             print_threeline(i, buffer, data, find_length, 8);
         }
+        if(n_q() == 0) break;
+        else continue;
     }
+    clear();
 }
 
 // -n : 일치한 문자열이 포함된 라인 번호를 출력한다.
