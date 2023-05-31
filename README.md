@@ -32,6 +32,7 @@ __command : ./grep (pattern) (filename)__
 
 (filename)에서 (pattern)을 하이라이트로 색칠해주는 기본적인 grep.
 
+-----
 
 #### option -i
 
@@ -41,6 +42,7 @@ __main function : 문자열의 대소문자를 구분하지 않고 출력.__
 
 (filename)에서 (pattern)을 찾되, (pattern)이 대문자로 구성된 경우도 같이 하이라이트 해줌.
 
+-----
 
 #### option -c
 
@@ -50,6 +52,7 @@ __main function : 문자열이 포함된 라인 개수를 표시.__
 
 (filename)에서 이 포함된 (pattern)줄의 개수를 모두 더하여 출력해주는 시스템.
 
+-----
 
 #### option -n
 
@@ -59,6 +62,7 @@ __main function : 일치한 문자열이 포함된 라인 번호를 출력.__
 
 (filename)에서 (pattern)이 포함된 줄의 번호를 순서대로 출력.
 
+-----
 
 #### option -w
 
@@ -68,6 +72,7 @@ __main function : 원하는 문자열이 독립된 단어로 존재하는 경우
 
 (filename) 에서 (pattern)이 하나의 단어로 이루어진 경우에만 출력함.
 
+-----
 
 #### option -v
 
@@ -77,6 +82,7 @@ __main function : 입력된 문자열이 포함되지 않는 줄들을 출력하
 
 (filename) 파일에서 (pattern)을 찾아서 해당 구문이 없는 구문들을 출력해줌.
 
+-----
 
 #### option -l
 
@@ -86,6 +92,7 @@ __main function : 현재 디렉토리에서 해당 문자열을 포함한 파일
 
 현재 디렉토리를 모두 돌면서 (pattern)을 내용으로 가지는 모든 파일들의 이름을 출력.
 
+-----
 
 #### option -r
 
@@ -95,6 +102,7 @@ __main function : 서브디렉토리의 파일까지 모두 출력.__
 
 서브 디렉토리까지 (pattern)이 존재하는 모든 파일의 내용을 전부 출력.
 
+-----
 
 #### option -a
 
@@ -104,6 +112,7 @@ __main function : 해당 디렉토리의 모든 파일에서 원하는 문자열
 
 해당 디렉토리에서 (pattern)이 존재하는 모든 파일의 내용을 전부 출력.
 
+-----
 
 #### option -p
 
