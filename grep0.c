@@ -19,21 +19,21 @@ WINDOW *win;
 WINDOW *win2;
 WINDOW *title;
 WINDOW *content;
+WINDOW *border_line;
+WINDOW *file_name;
 
-char* data_buffer[100];
+char* data_buffer[512];
 void makeUI();
 char** getdata(char* filename);
 int getbuffersize(char** buffer);
 int getarraysize(int* arr);
 void printline(char* line, int* start_index, int find_length, int linenum);
 void print_fiveline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
-
-void option_l(char* findstr, int find_length);
 void restore(int fd, struct termios* prev_term);
 
 int main(int argc, char* argv[])
 {   
-    char find[MAX], filename[64];
+    char findstr[MAX], filename[64];
     char option;
     
     if(argc < 3){
@@ -42,55 +42,57 @@ int main(int argc, char* argv[])
     }
     
     else if(argc == 3){
-		strcpy(find, argv[2]);
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
+			strcpy(findstr, argv[2]);
     		option = argv[1][1];
     		if(option == 'l'){
     			makeUI();
-    			option_l(argv[2], strlen(argv[2]));
+    			option_l(findstr, strlen(findstr));
   			}
 			if(option == 'a'){ // *과 같은 기능
     			makeUI();
-    			option_all(argv[2], strlen(argv[2]));	
+    			option_all(findstr, strlen(findstr));	
   			}
 			if(option == 'r'){ //서브디렉토리까지 모두 탐색
     			makeUI();
-    			option_r(argv[2], strlen(argv[2]));	
+    			option_r(findstr, strlen(findstr));	
   			}   
     	}
     	else { // 옵션이 없는 경우
+			strcpy(findstr, argv[1]);
+			strcpy(filename, argv[2]);
     		makeUI();
-    		option_none(argv[2],argv[1],strlen(argv[1])); // none option
+    		option_none(filename, findstr,strlen(findstr)); // none option
     	}
         endwin();
     }
     else if(argc == 4){
-		strcpy(find, argv[2]);
+		strcpy(findstr, argv[2]);
 		strcpy(filename, argv[3]);
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];	
     		if(option == 'c'){
-				option_c(argv[3], argv[2],strlen(argv[2])); // c option
+				option_c(filename, findstr,strlen(findstr)); // c option
 			}
 			if(option == 'i'){
 				makeUI();
-				option_i(argv[3],argv[2],strlen(argv[2])); // i option
+				option_i(filename, findstr,strlen(findstr)); // i option
 			}
 			if(option == 'n'){
 				makeUI();
-				option_n(argv[3],argv[2],strlen(argv[2])); // n option
+				option_n(filename, findstr,strlen(findstr)); // n option
 			}
             if(option == 'v'){
 				makeUI();
-				option_v(argv[3],argv[2],strlen(argv[2])); // v option
+				option_v(filename, findstr ,strlen(findstr)); // v option
 			}
 			if(option == 'w'){
 				makeUI();
-				option_w(argv[3],argv[2],strlen(argv[2])); // w option
+				option_w(filename, findstr,strlen(findstr)); // w option
 			}
 			if(option == 'c'){
 				makeUI();
-				option_c(argv[3],argv[2],strlen(argv[2])); // c option
+				option_c(filename, findstr,strlen(findstr)); // c option
 			}
 		}
         endwin();
@@ -104,34 +106,45 @@ int main(int argc, char* argv[])
 void makeUI(){ //UI를 window로 구현.
 	initscr();
 	clear();
-	win = newwin(23,60,2,7);
+	win = newwin(25,90,2,5);
 	box(win, ACS_VLINE, ACS_HLINE);
+
+	file_name = subwin(win, 2, 15, 5, 10);
+	wmove(file_name, 30, 1);
+	waddstr(file_name, "File:");
 	
-	title = subwin(win,3,20,3,27);
+	title = subwin(win,3,20,3,39);
 	box(title, ACS_VLINE, ACS_HLINE);
 	wmove(title,1,4);
 	waddstr(title,"find pattern");
 	
-	win2 = subwin(win,5,58,19,8);
+	win2 = subwin(win,5, 86, 21, 7);
 	box(win2, ACS_VLINE, ACS_HLINE);
-	wmove(win2,2,10);
+	wmove(win2,2,22);
 	waddstr(win2,"Please press (next : 'n' | quit : 'q')");
 	
-	content = subwin(win,13,58,6,8);
-	box(content, ACS_VLINE, ACS_HLINE);
+	content = subwin(win,13,84, 7,8);
+	
+	border_line = subwin(win,15, 86, 6,7);
+	box(border_line, ACS_VLINE, ACS_HLINE);
+
+	
+
 	wmove(content, 2,2);
 	wrefresh(win);
 	wrefresh(title);
 	wrefresh(win2);
 	wrefresh(content);
+	wrefresh(border_line);
+    wrefresh(file_name);
     
-    start_color();
-    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+	
+    // start_color();
+    // init_pair(1, COLOR_BLUE, COLOR_BLACK);
 }
 
 char** getdata(char* filename){//파일을 열어 char*배열에 파일 내용 넣어 반환
 	FILE* fp;
-
 	for(int i = 0; i < 100; i++){
 		data_buffer[100] = NULL;
 	}
@@ -201,9 +214,9 @@ void printline(char* line, int* data_KMP, int find_length, int linenum){//문자
 	}
 	else{
 		wmove(content, linenum, 2);
-		wattron(content, COLOR_PAIR(1));
+		//wattron(content, COLOR_PAIR(1));
 		waddstr(content, line);
-		wattroff(content, COLOR_PAIR(1));
+		//wattroff(content, COLOR_PAIR(1));
 	}
 }
 

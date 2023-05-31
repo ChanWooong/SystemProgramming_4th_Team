@@ -19,6 +19,8 @@ void init(){
 	wrefresh(title);
 	wrefresh(win2);
     wrefresh(content);
+    wrefresh(file_name);
+    wrefresh(border_line);
 }
 
 int controll(){
@@ -141,9 +143,12 @@ void option_l(char* findstr, int find_length){
 		wmove(content, 3,2);
 		if(data != NULL){
 			wmove(content,y++,2);
-    			waddstr(content,entry->d_name);
+    		waddstr(content,entry->d_name);
     	
 		}
+        else{
+            continue;
+        }
 
 		if(tmp = controll()==1)
             continue;
@@ -217,7 +222,7 @@ void option_v(char* filename, char* findstr, int find_length){
             continue;
         }
         else{
-            print_fiveline(i, buffer, data, find_length, 8);
+            print_fiveline(i, buffer, data, find_length, 5);
         }
         if(tmp = controll()==1)
             continue;
