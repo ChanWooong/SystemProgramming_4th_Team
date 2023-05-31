@@ -20,19 +20,22 @@ void init(){
 	wrefresh(win2);
     wrefresh(content);
 }
-int n_q(){
-	wrefresh(content);
-        noecho();
-	int ch = wgetch(win2);
-	if(tolower(ch) == 'n') {
-		clear();
-		return 1;
-	}
-	if(tolower(ch) == 'q') {
-		clear();
-		//sleep(2);
-		return 0;
-	}
+
+int controll(){
+    wrefresh(content);
+    noecho();
+    char ch;
+    while((ch = wgetch(win2)) != '\0'){
+        if(tolower(ch) == 'n') {
+            clear();
+            return 1;
+        }
+        if(tolower(ch) == 'q') {
+            clear();
+            return 0;
+        }
+    }
+	
 }
 
 char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
@@ -46,49 +49,32 @@ char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
 }
 
 
-// void option_l(char* filename, char* findstr, int find_length){
-//     FILE *fp;
-
-// }
-
 // -r : 서브 디렉터리의 파일까지 모두 출력한다.
-/*
-void option_r(char *dir){
+void option_r(char*findstr, int find_length){
     DIR *dp;
     struct dirent *entry;
     struct stat statbuf;
-    char buff[512];
-    int i = 0;
-    char* filelist[128];
-    char* findstr;
+    char buff[256];
 
-    if((dp = opendir(dir)) == NULL){
+    if((dp = opendir(".")) == NULL){//현재 디렉토리로 진입
         return;
     }
 
     while((entry = readdir(dp)) != NULL){
         stat(entry->d_name, &statbuf);
-        if(S_ISDIR(statbuf.st_mode)){
-            if(!strcmp(".", entry->d_name) || !strcmp("..", entry->d_name)){
-                continue;
-            }
-            sprintf(buff, "%s/%s", dir, entry->d_name);
-            chdir(buff);
-            subdir(buff);
+        if(!S_ISDIR(statbuf.st_mode)){
+            option_none(entry->d_name, findstr, find_length);
         }
         else{
-            sprintf(buff, "%s/%s", dir, entry->d_name);
-            option_none(findstr, entry->d_name, find_length);
-            printf("%s\n", buff);
-
-        }
+            option_r(findstr, find_length);
+        }    
     }
+    closedir(dp);
 }
-*/
 void option_none(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
-    int line_length, *data;
+    int line_length, *data, tmp;
     for(int i = 0; i<buffer_size; i++){
 	    init(); 
         line_length = strlen(buffer[i]);
@@ -99,13 +85,16 @@ void option_none(char* filename, char* findstr, int find_length){
         else{
             continue;
         }
-        if(n_q() == 0) break;
-        else continue;
+
+        if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
     }
     clear();
 }
 
-void option_all(FILE* fp, char* findstr, int find_length){
+void option_all(char* findstr, int find_length){
     DIR *dp;
     struct dirent *entry;
     struct stat statbuf;
@@ -125,11 +114,10 @@ void option_all(FILE* fp, char* findstr, int find_length){
 }
 
 
-void option_l(char* findstr, int find_length){
 // -l : 문자열이 일치한 파일의 이름만 출력한다.
-	
+void option_l(char* findstr, int find_length){
 	struct dirent *entry = NULL;
-	int i = 0;
+	int i = 0, tmp;
 	DIR *d = NULL;
 	d = opendir(".");
 	init();
@@ -156,8 +144,11 @@ void option_l(char* findstr, int find_length){
     			waddstr(content,entry->d_name);
     	
 		}
-		if(n_q() == 0) break;
-		else continue;
+
+		if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
 	}
 }
 
@@ -165,7 +156,7 @@ void option_l(char* findstr, int find_length){
 void option_c(char* filename, char* findstr, int find_length){
       char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
-    int line_length, *data;
+    int line_length, *data, tmp;
     char num[50];
     int cnt = 1;
     init();
@@ -183,7 +174,6 @@ void option_c(char* filename, char* findstr, int find_length){
     wstandout(content);
     waddstr(content,num);
     wstandend(content);
-    n_q();
     wrefresh(content);	
 }
 
@@ -192,7 +182,7 @@ void option_i(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     char* lwr_line, *lwr_find;
     int buffer_size = getbuffersize(data_buffer);
-    int line_length, *data;
+    int line_length, *data, tmp;
 
     for(int i = 0; i<buffer_size; i++){
     	init();
@@ -206,36 +196,19 @@ void option_i(char* filename, char* findstr, int find_length){
         else{
             continue;
         } 
-        if(n_q() == 0) break;
-        else continue;
+        if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
     }
     clear();
-}
-	
-
-// -h : 파일 이름을 출력하지 않는다.
-void option_h(char* filename, char* findstr, int find_length){
-    char** buffer = getdata(filename);
-    int buffer_size = getbuffersize(data_buffer);
-    int line_length, *data;
-
-    for(int i = 0; i<buffer_size; i++){
-        line_length = strlen(buffer[i]);
-        data = KMP(buffer[i], findstr, line_length, find_length);
-        if(data != NULL){
-            print_threeline(i, buffer, data, find_length, 8);
-        }
-        else{
-            continue;
-        }
-    }
 }
 
 // -v : 입력한 패턴이 포함되지 않은 문자열을 출력한다.
 void option_v(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
-    int line_length, *data;
+    int line_length, *data, tmp;
     for(int i = 0; i < buffer_size; i++){
         init();
         line_length = strlen(buffer[i]);
@@ -246,8 +219,10 @@ void option_v(char* filename, char* findstr, int find_length){
         else{
             print_threeline(i, buffer, data, find_length, 8);
         }
-        if(n_q() == 0) break;
-        else continue;
+        if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
     }
     clear();
 }
@@ -258,7 +233,7 @@ void option_n(char* filename, char* findstr, int find_length){
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
     char find_linum[50][100];
-    int index=0;
+    int index=0, tmp;
     init();
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
@@ -280,7 +255,10 @@ void option_n(char* filename, char* findstr, int find_length){
     	waddstr(content,find_linum[k]);
     	wstandend(content);
     	
-    	if(n_q() == 0) break; 	
+    	if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
     }
 }
 // -w : 입력한 문자열이 독립된 단어로 존재하는 경우만 출력한다.
@@ -288,7 +266,7 @@ void option_w(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data;
-    int k, l;
+    int k, l, tmp;
     char last[256];
     for(int i = 0; i < buffer_size; i++){
         line_length = strlen(buffer[i]);
@@ -316,9 +294,9 @@ void option_w(char* filename, char* findstr, int find_length){
         else{
             continue;
         }
-        if(n_q() == 0) 
-            break;
-        else
+        if(tmp = controll()==1)
             continue;
+        else if(tmp == 0)
+            break;
     }
 }

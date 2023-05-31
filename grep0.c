@@ -33,7 +33,7 @@ void restore(int fd, struct termios* prev_term);
 
 int main(int argc, char* argv[])
 {   
-    char find[MAX];
+    char find[MAX], filename[64];
     char option;
     
     if(argc < 3){
@@ -42,12 +42,21 @@ int main(int argc, char* argv[])
     }
     
     else if(argc == 3){
+		strcpy(find, argv[2]);
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];
     		if(option == 'l'){
     			makeUI();
     			option_l(argv[2], strlen(argv[2]));
-  		} 
+  			}
+			if(option == 'a'){ // *과 같은 기능
+    			makeUI();
+    			option_all(argv[2], strlen(argv[2]));	
+  			}
+			if(option == 'r'){ //서브디렉토리까지 모두 탐색
+    			makeUI();
+    			option_r(argv[2], strlen(argv[2]));	
+  			}   
     	}
     	else { // 옵션이 없는 경우
     		makeUI();
@@ -56,6 +65,8 @@ int main(int argc, char* argv[])
         endwin();
     }
     else if(argc == 4){
+		strcpy(find, argv[2]);
+		strcpy(filename, argv[3]);
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];	
     		if(option == 'c'){
