@@ -175,8 +175,6 @@ void option_h(char* filename, char* findstr, int find_length){
 
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
-        Strlwr(buffer[i]);
-        Strlwr(findstr);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data != NULL){
             print_threeline(i, buffer, data, find_length, 8);
@@ -192,8 +190,6 @@ void option_v(char* filename, char* findstr, int find_length){
 
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
-        Strlwr(buffer[i]);
-        Strlwr(findstr);
         data = KMP(buffer[i], findstr, line_length, find_length);
         if(data == NULL){
             print_threeline(i, buffer, data, find_length, 8);
