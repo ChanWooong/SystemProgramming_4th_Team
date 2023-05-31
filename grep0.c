@@ -26,7 +26,7 @@ char** getdata(char* filename);
 int getbuffersize(char** buffer);
 int getarraysize(int* arr);
 void printline(char* line, int* start_index, int find_length, int linenum);
-void print_threeline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
+void print_fiveline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
 void option_l(char* findstr, int find_length);
 void restore(int fd, struct termios* prev_term);
