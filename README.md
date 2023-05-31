@@ -27,6 +27,7 @@ __pipe (O)__
 __signal handling (O)__
 __curses(window) (O)__
 __fork (O) (when using a pipe)__
+__Makefile (O)__
 __file and directory handling (O)__
 
 ------
