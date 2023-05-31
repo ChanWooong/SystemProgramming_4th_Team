@@ -30,15 +30,22 @@ int getarraysize(int* arr);
 void printline(char* line, int* start_index, int find_length, int linenum);
 void print_fiveline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 void restore(int fd, struct termios* prev_term);
+void myhandler(int sig){
+	signal(sig, SIG_IGN);
+}
 
 int main(int argc, char* argv[])
 {   
     char findstr[MAX], filename[64];
     char option;
     
-    if(argc < 3){
-    	printf("check the number of parameters.\n");
-	    exit(1);
+	signal(SIGINT, myhandler);
+	signal(SIGQUIT, myhandler);
+	
+     if(argc == 2){
+       makeUI();
+       basicGrep(argv[1]);
+       endwin();
     }
     
     else if(argc == 3){
@@ -97,8 +104,8 @@ int main(int argc, char* argv[])
 		}
         endwin();
     }
-    else if(argc == 6 && argv[1][1] == 'p'){
-    	
+    else if(argc == 5 && argv[1][1] == 'p'){
+		pipeLine(argv[2], argv[4]);
     }
 
     return 0;

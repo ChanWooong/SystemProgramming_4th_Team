@@ -12,7 +12,6 @@
 #define MAX 3000
 
 
-
 //KMP의 리턴값은 시작포인트 int배열, 문자열이 없는 경우 NULL 출력
 void init(){
 	wrefresh(win);
@@ -43,7 +42,6 @@ int controll(){
 char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
     int i = 0;
     char* result_string = (char*)malloc(sizeof(char) * strlen(string));
-    //printf("%s", string);
     for(int k = 0; k<strlen(string);k++){
         result_string[k] = tolower(string[k]);
     }
@@ -77,6 +75,8 @@ void option_none(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data, tmp;
+    wmove(win, 5, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i<buffer_size; i++){
 	    init(); 
         line_length = strlen(buffer[i]);
@@ -165,6 +165,8 @@ void option_c(char* filename, char* findstr, int find_length){
     char num[50];
     int cnt = 1;
     init();
+    wmove(file_name, 0, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
@@ -188,7 +190,8 @@ void option_i(char* filename, char* findstr, int find_length){
     char* lwr_line, *lwr_find;
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data, tmp;
-
+    wmove(file_name, 0, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i<buffer_size; i++){
     	init();
     	line_length = strlen(buffer[i]);
@@ -214,6 +217,8 @@ void option_v(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data, tmp;
+    wmove(file_name, 0, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i < buffer_size; i++){
         init();
         line_length = strlen(buffer[i]);
@@ -240,6 +245,8 @@ void option_n(char* filename, char* findstr, int find_length){
     char find_linum[50][100];
     int index=0, tmp;
     init();
+    wmove(file_name, 0, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i<buffer_size; i++){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
@@ -273,6 +280,8 @@ void option_w(char* filename, char* findstr, int find_length){
     int line_length, *data;
     int k, l, tmp;
     char last[256];
+    wmove(file_name, 0, 30);
+    waddstr(file_name, filename);
     for(int i = 0; i < buffer_size; i++){
         line_length = strlen(buffer[i]);
         data = KMP(buffer[i], findstr, line_length, find_length);
@@ -304,4 +313,26 @@ void option_w(char* filename, char* findstr, int find_length){
         else if(tmp == 0)
             break;
     }
+}
+void basicGrep(char pattern[]){
+   char line[MAX];
+   char data[100][MAX];
+   int y = 2;
+   int cnt = 0, tmp;
+   init();
+   while(fgets(line, sizeof(line), stdin) != NULL){
+      if(strstr(line, pattern) != NULL){
+         strcpy(data[cnt++], line);
+      }
+   }
+   init();
+   wmove(content, y,2);
+   for(int i = 0 ; i<cnt; i++){
+      waddstr(content, data[i]);
+      if(tmp = controll()==1)
+            continue;
+        else if(tmp == 0)
+            break;
+   }
+   sleep(2);
 }

@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 
 int pipeLine(char child[], char option[]){
 	int thepipe[2], newfd, pid;

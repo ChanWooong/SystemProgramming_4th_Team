@@ -6,6 +6,8 @@ WINDOW *win;
 WINDOW *win2;
 WINDOW *title;
 WINDOW *content;
+WINDOW *file_name;
+WINDOW *border_line;
 
 void option_none(char* filename, char* findstr, int find_length);
 
@@ -34,7 +36,7 @@ void option_w(char* filename, char* findstr, int find_length);
 
 void option_l(char* findstr, int find_length);
 
-char* data_buffer[100];
+char* data_buffer[512];
 
 char** getdata(char* filename);
 
@@ -46,3 +48,6 @@ void printline(char* line, int* start_index, int find_length, int linenum);
 
 void print_fiveline(int i, char** buffer, int* data_KMP, int find_len, int linenum);
 
+void basicGrep(char pattern[]);
+
+int pipeLine(char child[], char option[]);
