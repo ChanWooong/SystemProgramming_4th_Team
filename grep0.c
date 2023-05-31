@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     
 	signal(SIGINT, myhandler);
 	signal(SIGQUIT, myhandler);
-	
+
      if(argc == 2){
        makeUI();
        basicGrep(argv[1]);
@@ -79,6 +79,7 @@ int main(int argc, char* argv[])
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];	
     		if(option == 'c'){
+				makeUI();
 				option_c(filename, findstr,strlen(findstr)); // c option
 			}
 			if(option == 'i'){

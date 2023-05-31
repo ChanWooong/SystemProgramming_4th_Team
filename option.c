@@ -26,7 +26,7 @@ int controll(){
     wrefresh(content);
     noecho();
     char ch;
-    while((ch = wgetch(win2)) != '\0'){
+    while((ch = wgetch(content)) != '\0'){
         if(tolower(ch) == 'n') {
             clear();
             return 1;
@@ -75,8 +75,10 @@ void option_none(char* filename, char* findstr, int find_length){
     char** buffer = getdata(filename);
     int buffer_size = getbuffersize(data_buffer);
     int line_length, *data, tmp;
-    wmove(win, 5, 30);
-    waddstr(file_name, filename);
+    wmove(win, 3, 10);
+    waddstr(win, "           ");
+    wmove(win, 3, 10);
+    waddstr(win, filename);
     for(int i = 0; i<buffer_size; i++){
 	    init(); 
         line_length = strlen(buffer[i]);
@@ -109,6 +111,9 @@ void option_all(char* findstr, int find_length){
     while((entry = readdir(dp)) != NULL){
         stat(entry->d_name, &statbuf);
         if(!S_ISDIR(statbuf.st_mode)){
+            if(strcmp(entry->d_name, "README.md") == 0){
+                continue;
+            }
             option_none(entry->d_name, findstr, find_length);
         }    
     }
@@ -181,7 +186,8 @@ void option_c(char* filename, char* findstr, int find_length){
     wstandout(content);
     waddstr(content,num);
     wstandend(content);
-    wrefresh(content);	
+    wrefresh(content);
+    controll();
 }
 
 // -i : 문자열의 대소문자를 구분하지 않는다.
