@@ -35,14 +35,13 @@ int main(int argc, char* argv[])
 {   
     char find[MAX], filename[64];
     char option;
-    
-    if(argc < 3){
-    	printf("check the number of parameters.\n");
-	    exit(1);
+    if(argc == 2){
+    	makeUI();
+    	basicGrep(argv[1]);
+    	endwin();
     }
-    
-    else if(argc == 3){
-		strcpy(find, argv[2]);
+
+    if(argc == 3){
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];
     		if(option == 'l'){
@@ -95,12 +94,13 @@ int main(int argc, char* argv[])
 		}
         endwin();
     }
-    else if(argc == 6 && argv[1][1] == 'p'){
-    	
+    if(argc == 5 && argv[1][1] == 'p'){
+     	pipeLine(argv[2], argv[4]);
     }
 
     return 0;
 }
+
 void makeUI(){ //UI를 window로 구현.
 	initscr();
 	clear();
