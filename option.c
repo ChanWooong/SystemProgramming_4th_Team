@@ -9,6 +9,7 @@
 #include "grepLib.h"
 #include <curses.h>
 #include <signal.h>
+#define MAX 3000
 
 
 
@@ -122,6 +123,42 @@ void option_all(FILE* fp, char* findstr, int find_length){
         }    
     }
     closedir(dp);
+}
+
+
+void option_l(char* findstr, int find_length){
+	
+	struct dirent *entry = NULL;
+	int i = 0;
+	DIR *d = NULL;
+	d = opendir(".");
+	init();
+	int y = 4;
+	char ch;
+	while(1){
+		if((entry = readdir(d)) == NULL){
+			wmove(content, ++y, 2);
+			waddstr(content,"the file list is end");
+			clear();
+			break;		
+		}
+		char *name;
+		char buffer[MAX] = {0};
+		FILE* fd = fopen(entry->d_name, "r");
+		fread(buffer,1, MAX, fd);
+		int* data = NULL;
+		data = KMP(buffer, findstr ,strlen(buffer), strlen(findstr));
+		wmove(content,2,2);
+		waddstr(content,"*match pattern File list*");
+		wmove(content, 3,2);
+		if(data != NULL){
+			wmove(content,y++,2);
+    			waddstr(content,entry->d_name);
+    	
+		}
+		if(n_q() == 0) break;
+		else continue;
+	}
 }
 
 // -c : 문자열이 포함된 라인 개수를 표시한다.

@@ -32,6 +32,8 @@ void option_n(char* filename, char* findstr, int find_length);
 // -w : 입력한 문자열이 독립된 단어로 존재하는 경우만 출력한다.
 void option_w(char* filename, char* findstr, int find_length);
 
+void option_l(char* findstr, int find_length);
+
 char* data_buffer[100];
 
 char** getdata(char* filename);

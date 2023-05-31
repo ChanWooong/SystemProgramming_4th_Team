@@ -45,15 +45,15 @@ int main(int argc, char* argv[])
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
     		option = argv[1][1];
     		if(option == 'l'){
-    			strcpy(find,argv[2]);
-    			option_l(find, strlen(find));
+    			makeUI();
+    			option_l(argv[2], strlen(argv[2]));
   		} 
     	}
     	else { // 옵션이 없는 경우
     		makeUI();
     		option_none(argv[2],argv[1],strlen(argv[1])); // none option
-            endwin();
     	}
+        endwin();
     }
     else if(argc == 4){
     	if(argv[1][0] == '-'){ // 옵션이 있는 경우
@@ -108,33 +108,6 @@ void makeUI(){ //UI를 window로 구현.
     
     start_color();
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
-}
-
-void option_l(char* findstr, int find_length){
-	
-	struct dirent *entry = NULL;
-	int i = 0;
-	DIR *d = NULL;
-	d = opendir(".");
-	printf("---------------File List-------------\n");
-	while((entry = readdir(d))!=NULL){
-		char name[100];
-		char buffer[MAX] = {0};
-		FILE* fd = fopen(entry->d_name, "r");
-		fread(buffer,1, MAX, fd);
-		int* data = NULL;
-		data = KMP(buffer, findstr ,strlen(buffer), strlen(findstr));
-		if(data != NULL)
-			printf("%s\n",entry->d_name);
-	/*
-		for(int i = 0 ; i<3; i++){
-			printf("%d, ",data[i]);
-		}
-		printf("\n");
-	*/	
-
-	}
-	printf("--------------------------------------\n");
 }
 
 char** getdata(char* filename){//파일을 열어 char*배열에 파일 내용 넣어 반환
