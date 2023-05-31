@@ -71,11 +71,15 @@ int main(int argc, char* argv[])
 			}
             if(option == 'v'){
 				makeUI();
-				option_v(argv[3],argv[2],strlen(argv[2])); // n option
+				option_v(argv[3],argv[2],strlen(argv[2])); // v option
 			}
 			if(option == 'w'){
 				makeUI();
-				option_w(argv[3],argv[2],strlen(argv[2])); // n option
+				option_w(argv[3],argv[2],strlen(argv[2])); // w option
+			}
+			if(option == 'c'){
+				makeUI();
+				option_c(argv[3],argv[2],strlen(argv[2])); // c option
 			}
 		}
         endwin();

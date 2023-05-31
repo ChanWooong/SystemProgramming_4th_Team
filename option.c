@@ -46,7 +46,6 @@ char* Strlwr(char* string){ //option_i에 필요(대소문자 구별 X)
 }
 
 
-// -l : 문자열이 일치한 파일의 이름만 출력한다.
 // void option_l(char* filename, char* findstr, int find_length){
 //     FILE *fp;
 
@@ -127,6 +126,7 @@ void option_all(FILE* fp, char* findstr, int find_length){
 
 
 void option_l(char* findstr, int find_length){
+// -l : 문자열이 일치한 파일의 이름만 출력한다.
 	
 	struct dirent *entry = NULL;
 	int i = 0;
@@ -163,26 +163,28 @@ void option_l(char* findstr, int find_length){
 
 // -c : 문자열이 포함된 라인 개수를 표시한다.
 void option_c(char* filename, char* findstr, int find_length){
-    FILE *fp;
-    int cnt = 0, line_length;
-    char* line;
-    char buffer[256];
-    fp = fopen(filename, "r");
-    while(fgets(buffer, 256, fp)!=NULL){
-        if(buffer == NULL)
-            break;
-        line_length = strlen(buffer);
-        line = buffer;
-        
-        if(strstr(buffer, findstr) != NULL){
-        //KMP의 리턴값이 NULL이 아니면, cnt++;
-            cnt++;
+      char** buffer = getdata(filename);
+    int buffer_size = getbuffersize(data_buffer);
+    int line_length, *data;
+    char num[50];
+    int cnt = 1;
+    init();
+    for(int i = 0; i<buffer_size; i++){
+        line_length = strlen(buffer[i]);
+        data = KMP(buffer[i], findstr, line_length, find_length);
+        if(data != NULL){
+        	cnt++;
         }
-        line = NULL;
     }
-    printf("<%d>", cnt);
-    //printf("line that have "%s" : %d\n", find, string);
-    fclose(fp);
+    sprintf(num, "%d", cnt);
+    wmove(content,2,2);
+    waddstr(content, "the count of line : ");
+    wmove(content,4,2);
+    wstandout(content);
+    waddstr(content,num);
+    wstandend(content);
+    n_q();
+    wrefresh(content);	
 }
 
 // -i : 문자열의 대소문자를 구분하지 않는다.
@@ -209,6 +211,7 @@ void option_i(char* filename, char* findstr, int find_length){
     }
     clear();
 }
+	
 
 // -h : 파일 이름을 출력하지 않는다.
 void option_h(char* filename, char* findstr, int find_length){
